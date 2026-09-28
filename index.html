@@ -439,6 +439,49 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
 .steps li{display:flex;gap:12px;align-items:flex-start}
 .sn{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bib);color:#1B1600;font-weight:800;display:flex;align-items:center;justify-content:center}
 .steps .ico{display:inline-flex;vertical-align:middle;margin-left:6px;color:#0A84FF}
+/* dopasowanie kafelków do wąskich ekranów */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.mytask,.row .main,.item .tt,.evcard,.hero,.next,.pcard .bd,.ghead,.profhead,.namebox,.evrow,.mag-items,.pc-tx,.empty{overflow-wrap:anywhere;word-break:break-word}
+.tag,.ttag,.wtag{white-space:normal;max-width:100%;overflow-wrap:anywhere}
+.mytask{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start}
+.mytask input{margin-top:1px}
+.mytask .mt-body{min-width:0}
+.mytask .mt-body>b{display:block}
+.mytask .mt-meta{display:flex!important;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-top:4px;font-size:14px}
+.mytask .mt-meta>span{display:inline-block;color:var(--muted)}
+.mytask .mt-meta>span.tag,.mytask .mt-meta>span.wtag{color:inherit}
+.mytask .mt-meta>span.wtag.shared{color:var(--paper)}
+.mytask .mt-meta>span.late{color:var(--danger)}
+.mytask .notes{display:block;margin-top:6px;font-size:14px;color:var(--muted);white-space:pre-wrap}
+.row{min-width:0}.row .meta{min-width:0}
+input[type=date].in,input[type=time].in{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;min-height:40px;display:block}
+.two>*,.three>*{min-width:0}
+@media (max-width:640px){
+  .mytask{grid-template-columns:24px minmax(0,1fr) auto;gap:10px;padding:12px 10px 12px 14px}
+  .mytask input{width:22px;height:22px}
+  .mytask b{font-size:15.5px;line-height:1.35}
+  .mytask .mt-meta{font-size:13px}
+  .mytask .notes{font-size:13px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .mytask .editbtn{padding:4px 9px;min-height:32px}
+  .tag,.ttag,.wtag{font-size:11.5px;padding:2px 6px}
+  .pushcard{flex-wrap:wrap;padding:12px}
+  .pushcard .pc-tx{flex:1 1 calc(100% - 40px)}
+  .pushcard .btn{margin-left:36px}
+  .profhead{gap:12px}
+  .profhead .av{width:56px!important;height:56px!important;font-size:21px!important}
+  .profhead div{min-width:0;flex:1 1 calc(100% - 80px)}
+  .profhead .btn{margin-left:0}
+  .hello{padding:12px 14px;gap:12px}
+  .hello b{font-size:18px}
+  .group .row .meta{gap:4px 6px}
+}
+@media (max-width:640px){
+  .pushcard{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 10px;align-items:start}
+  .pushcard .pc-tx{flex:none}
+  .pushcard .btn{grid-column:1/-1;margin:8px 0 0;width:100%}
+  .mehead .mebtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mehead .mebtns .btn.primary{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
@@ -572,7 +615,7 @@ const FIREBASE_CONFIG = {
 
 /* Klucz do powiadomień push (Firebase → Ustawienia projektu → Cloud Messaging
    → Konfiguracja internetowa → Certyfikaty Web Push → para kluczy). */
-const VAPID_KEY = '';
+const VAPID_KEY = 'BBYsfGVvpbNB3T_9JITTUbn8Zyo2GWq4m3d_BGvfpUeZp35b6ROCXhsTZR4qc27yWb18rO7APW6PMK62dWsBPf0';
 
 const ORG='Event Kraft';
 const ROLES={member:'Członek',editor:'Edytor',admin:'Administrator'};
