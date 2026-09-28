@@ -482,6 +482,41 @@ input[type=date].in,input[type=time].in{min-width:0;max-width:100%;-webkit-appea
   .mehead .mebtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .mehead .mebtns .btn.primary{grid-column:1/-1}
 }
+
+.tstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 16px}
+.tstats>div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.tstats b{display:flex;align-items:center;gap:6px;font-size:22px;font-stretch:115%;font-weight:800;line-height:1.1}
+.tstats span{font-size:12.5px;color:var(--muted)}
+.sdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--line);flex:none}
+.sdot.now{background:#22A95B;box-shadow:0 0 0 3px rgba(34,169,91,.2)}
+.sdot.day{background:#E5A91A}.sdot.week{background:#9AA5B0}.sdot.old,.sdot.never{background:transparent;box-shadow:inset 0 0 0 2px var(--line)}
+.plist{display:flex;flex-direction:column;gap:8px}
+.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--pc);border-radius:10px;padding:10px 12px}
+.prow[hidden]{display:none}
+.prow-av{position:relative;background:none;border:0;padding:0}
+.prow-av .sdot{position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border:2px solid var(--surface)}
+.prow-av .sdot.old,.prow-av .sdot.never{background:var(--surface)}
+.prow-main{min-width:0;overflow-wrap:anywhere}
+.prow-name{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.prow-name b{font-size:16px}.prow-name .nick{color:var(--muted);font-size:14px}
+.prow-meta{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:13px;color:var(--muted);margin-top:2px}
+.seen.now{color:#1E8E4E;font-weight:700}.seen.day{color:var(--ink)}
+.pon{color:var(--moss)}
+.prow-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.noq{color:var(--muted);text-align:center}
+details.roles-help{margin-top:18px}
+details.roles-help summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.roles-help p{margin:8px 0 0}
+.pinfo{display:flex;flex-direction:column;gap:2px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:-6px 0 14px;font-size:13px;color:var(--muted)}
+.pinfo .seen{display:flex;align-items:center;gap:6px}
+#pinFld .inrow .in{min-width:120px}
+@media (max-width:640px){
+  .tstats{grid-template-columns:1fr 1fr}
+  .prow{grid-template-columns:auto minmax(0,1fr);gap:10px}
+  .prow-acts{grid-column:1/-1;justify-content:stretch}
+  .prow-acts .btn{flex:1}
+  #pinFld .inrow .btn{flex:1 1 100%}
+}
 </style>
 </head>
 <body>
@@ -541,6 +576,7 @@ input[type=date].in,input[type=time].in{min-width:0;max-width:100%;-webkit-appea
 <dialog id="personDlg">
   <form id="personForm" novalidate>
     <h2 id="personDlgTitle">Nowa osoba</h2>
+    <div class="pinfo" id="personInfo" hidden></div>
     <div class="photo">
       <div class="av" id="photoPrev" style="width:84px;height:84px;font-size:28px">?</div>
       <div>
@@ -558,7 +594,7 @@ input[type=date].in,input[type=time].in{min-width:0;max-width:100%;-webkit-appea
         <option value="editor">Edytor – zarządza zadaniami i wydarzeniami</option>
         <option value="admin">Administrator – pełny dostęp i nadawanie ról</option>
       </select></label>
-      <label class="fld" id="pinFld">PIN do logowania<input class="in" name="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password" placeholder="min. 4 cyfry"><span class="hint" id="pinHint"></span></label>
+      <div class="fld" id="pinFld"><label for="pinIn">PIN do logowania</label><div class="inrow"><input class="in" id="pinIn" name="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password" placeholder="min. 4 cyfry"><button type="button" class="btn" id="pinReset">Wygeneruj nowy PIN</button></div><span class="hint" id="pinHint"></span></div>
     </div>
     <div class="dacts">
       <button type="button" class="btn danger left" id="personDel">Usuń osobę</button>
@@ -623,7 +659,7 @@ const TYPES={sport:{l:'Sportowe',i:'🏃'},muzyka:{l:'Muzyczne',i:'🎵'},kultur
 const typeOf=e=>TYPES[e&&e.type]?e.type:'inne';
 const typeTag=e=>`<span class="ttag t-${typeOf(e)}">${TYPES[typeOf(e)].i} ${TYPES[typeOf(e)].l}</span>`;
 const state={people:[],tasks:[],events:[],tokens:[]};
-const ui={meTab:'zadania',fCal:'all',fType:'all',screen:'home',eventId:null,tab:'zadania',fEvent:'all',fPerson:'all',showDone:false,pview:'month',cursor:new Date(),loginErr:''};
+const ui={teamF:'all',meTab:'zadania',fCal:'all',fType:'all',screen:'home',eventId:null,tab:'zadania',fEvent:'all',fPerson:'all',showDone:false,pview:'month',cursor:new Date(),loginErr:''};
 let fs=null,loaded=false;
 
 const pad=n=>String(n).padStart(2,'0');
@@ -677,6 +713,23 @@ function dueText(t,short){const o=short?{day:'numeric',month:'short'}:{day:'nume
 function dueHtml(t,short){if(!t.date)return '';const l=isLate(t);return `<span class="${l?'late':''}">${l?'Po terminie · ':''}${isMulti(t)?'🗓 ':''}${dueText(t,short)}</span>`}
 function canEdit(t){if(me())return true;const m=member();return !!m&&!m.pending&&(isMine(t,m.id)||t.createdBy===m.id)}
 const canDelete=t=>!!me()||(!!member()&&t.createdBy===member().id);
+function actState(p){if(!p||!p.lastSeen)return 'never';const m=(Date.now()-p.lastSeen)/60000;return m<6?'now':m<1440?'day':m<10080?'week':'old'}
+function lastSeenText(p){
+  if(!p||!p.lastSeen)return 'jeszcze nie był(a) w aplikacji';
+  const m=(Date.now()-p.lastSeen)/60000,d=new Date(p.lastSeen),hm=pad(d.getHours())+':'+pad(d.getMinutes());
+  if(m<6)return 'aktywny(-a) teraz';if(m<60)return Math.max(1,Math.round(m))+' min temu';
+  const dd=daysBetween(ymd(d),today());if(dd===0)return 'dziś o '+hm;if(dd===1)return 'wczoraj o '+hm;if(dd<7)return dd+' dni temu';
+  return fmt(d,{day:'numeric',month:'long'});
+}
+async function touch(force){
+  const p=member();if(!p||!loaded)return;
+  const k='ek-touch-'+p.id,last=+(ls.get(k)||0);if(!force&&Date.now()-last<4*60000)return;
+  ls.set(k,String(Date.now()));
+  if(fs){try{await fs.collection('people').doc(p.id).update({lastSeen:Date.now()})}catch(e){}}
+  else{p.lastSeen=Date.now();saveLocal()}
+}
+setInterval(()=>{if(document.visibilityState==='visible'){touch();if(ui.screen==='admin'&&ui.tab==='zespol'&&!document.querySelector('dialog[open]')&&document.activeElement?.id!=='teamQ')render()}},60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')touch()});
 const active=()=>state.people.filter(p=>!p.pending);
 const pendingList=()=>state.people.filter(p=>p.pending);
 const hasAdmin=()=>state.people.some(p=>p.role==='admin');
@@ -710,14 +763,14 @@ async function init(){
       ['people','tasks','events'].forEach(c=>fs.collection(c).onSnapshot(s=>{
         state[c]=s.docs.map(d=>({id:d.id,...d.data()}));
         if(c==='people')state.people.sort((a,b)=>(a.name||'').localeCompare(b.name||'','pl'));
-        got.add(c);if(got.size===3)loaded=true;render();
+        got.add(c);if(got.size===3&&!loaded){loaded=true;setTimeout(()=>touch(true),300)}render();
       },e=>{console.error(e);$('#modeBanner').innerHTML='<div class="banner">Brak dostępu do bazy danych. Sprawdź reguły Firestore w Firebase.</div>'}));
       return;
     }catch(e){console.error(e);fs=null;$('#modeBanner').innerHTML='<div class="banner">Nie udało się połączyć z bazą. Pracujesz w trybie lokalnym.</div>'}
   }else{
     $('#modeBanner').innerHTML='<div class="banner">Tryb próbny: dane zapisują się tylko w tej przeglądarce. Żeby wszyscy widzieli te same zadania, podłącz bazę Firebase (instrukcja na górze pliku).</div>';
   }
-  loadLocal();loaded=true;render();
+  loadLocal();loaded=true;render();setTimeout(()=>touch(true),300);
 }
 
 /* ---------- routing ---------- */
@@ -1062,15 +1115,32 @@ function aEvents(){
     <div class="inrow" style="flex:none"><button class="btn sm" data-copy="${e.id}">Kopiuj link</button><button class="btn sm" data-go="e/${e.id}">Otwórz</button><button class="btn sm" data-edit-event="${e.id}">Edytuj</button></div></div>`}).join('');
 }
 function aTeam(){
-  const help=`<div class="roles-help"><b>Członek</b> wpisuje imię, ma swoje konto z zadaniami i kalendarzem, może zmienić zdjęcie, pseudonim i kolor. <b>Edytor</b> loguje się PIN-em do panelu i zarządza zadaniami, wydarzeniami i członkami. <b>Administrator</b> ma pełny dostęp, w tym nadawanie ról i PIN-ów.</div>`;
   const hasPush=id=>state.tokens.some(k=>k.personId===id);
-  const pushInfo=fs&&VAPID_KEY?`<div class="calrow" style="margin:-6px 0 16px"><span>🔔 Powiadomienia włączone: <b>${active().filter(p=>hasPush(p.id)).length} z ${active().length}</b> osób.</span></div>`:(fs?`<div class="banner">Powiadomienia nie są jeszcze skonfigurowane (brak klucza VAPID w pliku).</div>`:'');
-  const cards=active().map(p=>{const open=state.tasks.filter(t=>isMine(t,p.id)&&!t.done).length;
-    return `<article class="pcard" style="--pc:${colorOf(p)}"><button class="ph" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</button><div class="bd"><b>${esc(p.name)}</b>${p.nick?`<span>„${esc(p.nick)}”</span>`:''}<span>${esc(p.func||'')}</span>${p.contact?`<span>${esc(p.contact)}</span>`:''}<span><span class="role role-${p.role||'member'}">${ROLES[p.role]||ROLES.member}</span></span><span>${open} ${open===1?'zadanie':'zadań'} do zrobienia</span>${fs&&VAPID_KEY?`<span class="pushflag ${hasPush(p.id)?'on':''}">${hasPush(p.id)?'🔔 powiadomienia':'🔕 bez powiadomień'}</span>`:''}<button class="btn sm" data-show-person="${p.id}">Pokaż zadania</button></div></article>`}).join('');
+  const pushOn=!!(fs&&VAPID_KEY);
+  const act=active(),cnt=k=>act.filter(p=>k.includes(actState(p))).length;
+  const stats=`<div class="tstats">
+    <div><b><i class="sdot now"></i>${cnt(['now'])}</b><span>aktywnych teraz</span></div>
+    <div><b>${cnt(['now','day'])}</b><span>w ciągu doby</span></div>
+    <div><b>${cnt(['now','day','week'])}</b><span>w tym tygodniu</span></div>
+    ${pushOn?`<div><b>${act.filter(p=>hasPush(p.id)).length}/${act.length}</b><span>z powiadomieniami</span></div>`:`<div><b>${act.length}</b><span>osób w zespole</span></div>`}</div>`;
   const pend=pendingList();
-  const invite=`<div class="calrow" style="margin:0 0 16px"><span>Link, przez który ludzie sami dołączają do zespołu:</span><button class="btn sm" data-copy-join>Kopiuj link zaproszenia</button></div>`;
   const pendH=pend.length?`<section class="group pendbox"><div class="ghead"><h3>Nowe zgłoszenia (${pend.length})</h3></div>${pend.map(p=>`<div class="row" style="align-items:center">${avatar(p,40)}<div class="main"><span class="t">${esc(dispName(p))}</span><span class="meta">${p.contact?esc(p.contact)+' · ':''}zgłoszenie ${p.joinedAt?fmt(new Date(p.joinedAt),{day:'numeric',month:'long'}):''}</span></div><button class="btn sm primary" data-accept="${p.id}">Zatwierdź</button><button class="btn sm danger" data-reject="${p.id}">Odrzuć</button></div>`).join('')}</section>`:'';
-  return help+pushInfo+invite+pendH+`<div class="team">${cards}<button class="pcard add" data-new="person"><span class="plus">+</span>Dodaj osobę</button></div>`;
+  const F=[['all','Wszyscy'],['now','Aktywni teraz'],['org','Organizatorzy'],['nopush','Bez powiadomień'],['never','Jeszcze nie weszli']].filter(([k])=>pushOn||k!=='nopush');
+  const match=p=>ui.teamF==='all'||(ui.teamF==='now'&&actState(p)==='now')||(ui.teamF==='org'&&p.role!=='member')||(ui.teamF==='nopush'&&!hasPush(p.id))||(ui.teamF==='never'&&actState(p)==='never');
+  const order={now:0,day:1,week:2,old:3,never:4};
+  const list=act.filter(match).sort((a,b)=>(order[actState(a)]-order[actState(b)])||((b.lastSeen||0)-(a.lastSeen||0))||a.name.localeCompare(b.name,'pl'));
+  const rows=list.map(p=>{const mine=state.tasks.filter(t=>isMine(t,p.id)),open=mine.filter(t=>!t.done).length,late=mine.filter(isLate).length,st=actState(p);
+    return `<div class="prow" data-q="${esc(norm(p.name+' '+(p.nick||'')+' '+(p.func||'')+' '+(p.contact||'')))}" style="--pc:${colorOf(p)}">
+      <button class="prow-av" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${avatar(p,48)}<i class="sdot ${st}" title="${esc(lastSeenText(p))}"></i></button>
+      <div class="prow-main"><div class="prow-name"><b>${esc(p.name)}</b>${p.nick?`<span class="nick">„${esc(p.nick)}”</span>`:''}<span class="role role-${p.role||'member'}">${ROLES[p.role]||ROLES.member}</span></div>
+        <div class="prow-meta"><span class="seen ${st}">${esc(lastSeenText(p))}</span><span>${open} do zrobienia${late?` · <b class="late">${late} po terminie</b>`:''}</span>${pushOn?`<span class="${hasPush(p.id)?'pon':'poff'}">${hasPush(p.id)?'🔔 powiadomienia':'🔕 bez powiadomień'}</span>`:''}${p.func?`<span>${esc(p.func)}</span>`:''}${p.contact?`<span>${esc(p.contact)}</span>`:''}</div></div>
+      <div class="prow-acts"><button class="btn sm" data-edit-person="${p.id}">Edytuj</button><button class="btn sm" data-show-person="${p.id}">Zadania</button>${isAdmin()&&p.role!=='member'?`<button class="btn sm" data-reset-pin="${p.id}">Nowy PIN</button>`:''}</div></div>`}).join('');
+  return `${pendH}${stats}
+  <div class="bar"><input class="in" id="teamQ" type="search" placeholder="Szukaj osoby" aria-label="Szukaj osoby" style="flex:1 1 200px"><button class="btn primary" data-new="person">Dodaj osobę</button><button class="btn" data-copy-join>Kopiuj link zaproszenia</button></div>
+  <div class="bar"><div class="seg wrap-seg" role="group" aria-label="Filtr">${F.map(([k,l])=>`<button aria-pressed="${ui.teamF===k}" data-teamf="${k}">${l}</button>`).join('')}</div></div>
+  <div class="plist">${rows||`<div class="empty"><h3>Nikogo tu nie ma</h3><p>Zmień filtr albo dodaj osobę.</p></div>`}</div>
+  <p class="noq" hidden>Nie znaleziono osoby o takim imieniu.</p>
+  <details class="roles-help"><summary>Role i hasła – jak to działa</summary><p><b>Członek</b> wchodzi, wpisując imię i nazwisko, bez hasła. Ma konto z zadaniami i kalendarzem i może zmienić zdjęcie, pseudonim i kolor. Ty możesz edytować jego profil przyciskiem „Edytuj”.</p><p><b>Edytor</b> i <b>Administrator</b> logują się do panelu imieniem i PIN-em. PIN-y są zaszyfrowane, więc nikt ich nie widzi, także Ty. Jeśli ktoś zapomni PIN-u, kliknij „Nowy PIN”, zapisz i przekaż mu nowy.</p><p>Status aktywności odświeża się, gdy ktoś ma otwartą aplikację: zielona kropka to aktywny teraz, żółta to w ciągu doby.</p></details>`;
 }
 function aPlanner(){
   const sel=`<select class="in" id="fCal" aria-label="Czyj kalendarz"><option value="all">Wszyscy</option>${active().map(p=>`<option value="${p.id}" ${ui.fCal===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}</select>`;
@@ -1192,6 +1262,10 @@ $('#eventDel').addEventListener('click',async()=>{if(!editEvent)return;const n=t
   if(confirm('Usunąć wydarzenie „'+editEvent.name+'”?'+(n?' Jego zadania ('+n+') przejdą do zadań ogólnych.':''))&&await del('events',editEvent.id)){$('#eventDlg').close();toast('Usunięto')}});
 
 function setPhoto(src,name){photoData=src||'';$('#photoPrev').innerHTML=src?`<img src="${src}" alt="">`:esc(initials(name))}
+function genPin(){const f=$('#personForm');if(f.role.value==='member')f.role.value='editor';syncPin();
+  const pin=String(1000+Math.floor((crypto.getRandomValues?crypto.getRandomValues(new Uint32Array(1))[0]:Math.random()*1e9)%9000));
+  f.pin.type='text';f.pin.value=pin;$('#pinHint').innerHTML=`Nowy PIN: <b style="font-size:16px;color:var(--ink)">${pin}</b>. Kliknij „Zapisz” i przekaż go tej osobie. Stary PIN przestanie działać.`}
+$('#pinReset').addEventListener('click',genPin);
 function syncPin(){const f=$('#personForm'),priv=f.role.value!=='member';$('#pinFld').style.display=priv?'':'none';
   $('#pinHint').textContent=editPerson&&editPerson.pinHash?'Zostaw puste, żeby nie zmieniać PIN-u.':'Ta osoba poda PIN przy logowaniu do panelu.'}
 function openPerson(p){
@@ -1200,6 +1274,10 @@ function openPerson(p){
   f.name.value=p?.name||'';f.nick.value=p?.nick||'';f.func.value=p?.func||'';f.role.value=p?.role||'member';f.pin.value='';setPhoto(p?.photo||'',p?.name);
   $('#personColors').innerHTML=swatches('pcolor',p?colorOf(p):nextColor());
   $('#roleFields').style.display=adm?'':'none';syncPin();
+  const f2=$('#personForm');f2.pin.type='password';
+  if(p&&!p.pending){const mine=state.tasks.filter(t=>isMine(t,p.id)),push=state.tokens.some(k=>k.personId===p.id);
+    $('#personInfo').innerHTML=`<span class="seen ${actState(p)}"><i class="sdot ${actState(p)}"></i> ${esc(lastSeenText(p))}</span><span>${mine.filter(t=>!t.done).length} do zrobienia · ${mine.filter(t=>t.done).length} zrobione</span>${fs&&VAPID_KEY?`<span>${push?'🔔 powiadomienia włączone':'🔕 bez powiadomień'}</span>`:''}${p.contact?`<span>Kontakt: ${esc(p.contact)}</span>`:''}${p.joinedAt?`<span>Dołączył(a) ${fmt(new Date(p.joinedAt),{day:'numeric',month:'long',year:'numeric'})}</span>`:''}`;
+    $('#personInfo').hidden=false}else $('#personInfo').hidden=true;
   $('#personDel').style.display=p&&(adm||p.role==='member')&&p.id!==me()?.id?'':'none';$('#personErr').textContent='';$('#personDlg').showModal();f.name.focus();
 }
 $('#personForm').role.addEventListener('change',syncPin);
@@ -1230,7 +1308,7 @@ document.addEventListener('submit',async e=>{
     if(!n){errEl.textContent='Wpisz imię i nazwisko.';return}
     const p=state.people.find(x=>norm(x.name)===n)||(()=>{const byNick=state.people.filter(x=>x.nick&&norm(x.nick)===n);return byNick.length===1?byNick[0]:null})();
     if(!p){ui.prefill=f.n.value.trim();errEl.innerHTML='Nie ma takiej osoby na liście. Sprawdź pisownię albo <button type="button" class="linklike" data-go="dolacz">dołącz do zespołu</button>.';return}
-    ls.set('ek-me',p.id);toast('Cześć, '+shortName(p)+'!');if(ui.screen==='home')go('#/me');else render()}
+    ls.set('ek-me',p.id);toast('Cześć, '+shortName(p)+'!');setTimeout(()=>touch(true),100);if(ui.screen==='home')go('#/me');else render()}
   else if(f.id==='joinForm'){e.preventDefault();const name=f.name.value.trim().replace(/\s+/g,' '),err=m=>{$('#joinErr').textContent=m};
     if(name.split(' ').length<2)return err('Wpisz imię i nazwisko.');
     if(state.people.some(p=>norm(p.name)===norm(name)))return err('Osoba o takim imieniu już jest w zespole. Jeśli to Ty, wróć i wpisz swoje imię na stronie głównej.');
@@ -1278,6 +1356,8 @@ document.addEventListener('click',async e=>{
   if(el=g('[data-push-on]')){enablePush();return}
   if(el=g('[data-push-off]')){disablePush();return}
   if(el=g('[data-install]')){openInstall();return}
+  if(el=g('[data-reset-pin]')){const p=person(el.dataset.resetPin);if(p&&isAdmin()){openPerson(p);genPin()}return}
+  if(el=g('[data-teamf]')){ui.teamF=el.dataset.teamf;render();return}
   if(el=g('[data-accept]')){const p=person(el.dataset.accept);if(p&&me()&&await put('people',{...p,pending:false}))toast('Dodano '+shortName(p)+' do zespołu');return}
   if(el=g('[data-reject]')){const p=person(el.dataset.reject);if(p&&me()&&confirm('Odrzucić zgłoszenie: '+p.name+'?')&&await del('people',p.id))toast('Odrzucono zgłoszenie');return}
   if(el=g('[data-copy-join]')){const url=location.href.split('#')[0]+'#/dolacz';try{await navigator.clipboard.writeText(url);toast('Skopiowano link zaproszenia')}catch(err){prompt('Skopiuj link:',url)}return}
@@ -1288,6 +1368,9 @@ document.addEventListener('click',async e=>{
   if(el=g('[data-nav]')){const n=+el.dataset.nav,c=ui.cursor;
     ui.cursor=n===0?new Date():ui.pview==='day'?addDays(c,n):ui.pview==='week'?addDays(c,7*n):ui.pview==='month'?new Date(c.getFullYear(),c.getMonth()+n,1):new Date(c.getFullYear()+n,c.getMonth(),1);render();return}
 });
+document.addEventListener('input',e=>{if(e.target.id!=='teamQ')return;const q=norm(e.target.value);let n=0;
+  document.querySelectorAll('.prow').forEach(r=>{const ok=!q||r.dataset.q.includes(q);r.hidden=!ok;if(ok)n++});
+  const nq=document.querySelector('.noq');if(nq)nq.hidden=n>0||!document.querySelector('.prow')});
 document.addEventListener('change',async e=>{
   const t=e.target;
   if(t.id==='fEvent'){ui.fEvent=t.value;render()}
