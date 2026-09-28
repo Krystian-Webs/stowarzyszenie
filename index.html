@@ -517,6 +517,17 @@ details.roles-help p{margin:8px 0 0}
   .prow-acts .btn{flex:1}
   #pinFld .inrow .btn{flex:1 1 100%}
 }
+
+.admincard{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ink);color:var(--paper);border-radius:12px;padding:14px 16px;margin:12px 0}
+.admincard b{display:block;font-size:16px}
+.admincard span{display:block;font-size:13px;opacity:.85}
+.admincard .late{display:inline;color:#FFB4AD}
+.admincard .ac-btns{display:flex;gap:8px;flex-wrap:wrap}
+.admincard .btn{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.admincard .btn.primary{background:var(--bib);border-color:var(--bib);color:#1B1600}
+.admincard.slim{padding:10px 14px}
+.ver{margin:40px 0 0;text-align:center;font-size:12px;color:var(--muted)}
+@media (max-width:640px){.admincard .ac-btns{width:100%}.admincard .ac-btns .btn{flex:1}}
 </style>
 </head>
 <body>
@@ -654,6 +665,7 @@ const FIREBASE_CONFIG = {
 const VAPID_KEY = 'BBYsfGVvpbNB3T_9JITTUbn8Zyo2GWq4m3d_BGvfpUeZp35b6ROCXhsTZR4qc27yWb18rO7APW6PMK62dWsBPf0';
 
 const ORG='Event Kraft';
+const APP_VERSION='28.09 · 15:00';
 const ROLES={member:'Członek',editor:'Edytor',admin:'Administrator'};
 const TYPES={sport:{l:'Sportowe',i:'🏃'},muzyka:{l:'Muzyczne',i:'🎵'},kultura:{l:'Kulturalne',i:'🎭'},spotkanie:{l:'Spotkanie',i:'🤝'},inne:{l:'Inne',i:'📌'}};
 const typeOf=e=>TYPES[e&&e.type]?e.type:'inne';
@@ -903,8 +915,13 @@ function render(){
   const m=me(),mb=member();
   let who='';
   if(mb)who+=`<button class="btn sm acct" data-go="me">${avatar(mb,22)}<span>Moje konto</span></button>`;
-  if(m)who+=ui.screen==='admin'?`<button class="btn sm" data-go="home">Strona główna</button>`:`<button class="btn sm" data-go="admin">Panel ${m.role==='admin'?'admina':'edytora'}</button>`;
-  who+=m?`<button class="btn sm" data-logout title="Wyloguj z panelu">Wyloguj</button>`:`<button class="btn sm" data-go="login">Dla organizatorów</button>`;
+  if(m){
+    const pc=pendingList().length;
+    who+=`<button class="btn sm ${ui.screen==='admin'&&ui.tab==='zespol'?'primary':''}" data-go="admin/zespol">👥 Zespół${pc?` <span class="badge">${pc}</span>`:''}</button>`;
+    who+=ui.screen==='admin'?`<button class="btn sm" data-go="home">Strona główna</button>`:`<button class="btn sm" data-go="admin">Panel</button>`;
+    who+=`<button class="btn sm" data-logout title="Wyloguj z panelu">Wyloguj</button>`;
+  }else if(mb&&(mb.role==='admin'||mb.role==='editor'))who+=`<button class="btn sm primary" data-go="login">🔑 Zaloguj do panelu</button>`;
+  else who+=`<button class="btn sm" data-go="login">Dla organizatorów</button>`;
   $('#who').innerHTML=who;
   $('#peopleList').innerHTML=state.people.map(p=>`<option value="${esc(p.name)}">`).join('');
   document.title=ORG;
@@ -916,7 +933,7 @@ function render(){
   else if(ui.screen==='login')h=(m?(setTimeout(()=>go('#/admin')),''):vLogin());
   else if(ui.screen==='admin')h=m?vAdmin():vLogin();
   else h=vHome();
-  $('#view').innerHTML=h;
+  $('#view').innerHTML=h+`<p class="ver">${ORG} · wersja ${APP_VERSION}${fs?'':' · tryb lokalny'}</p>`;
 }
 function nameBox(title,sub){
   return `<div class="namebox"><h3>${title}</h3><p>${sub}</p>
@@ -944,6 +961,10 @@ function vHome(){
   if(mb){const open=state.tasks.filter(x=>isMine(x,mb.id)&&!x.done).length;
     h+=`<button class="hello" data-go="me">${avatar(mb,56)}<div><b>Cześć, ${esc(shortName(mb))}!</b><span>${open?`Masz ${open} ${open===1?'zadanie':'zadań'} do zrobienia.`:'Nie masz zadań do zrobienia.'} Kliknij, żeby otworzyć swoje konto.</span></div><span class="pdot" style="background:${colorOf(mb)}"></span></button>`+pushCard(true)}
   else h+=(isIOS&&!isStandalone()&&!iosTooOld()?pushCard(true):'')+nameBox('Twoje konto','Wpisz imię i nazwisko, żeby zobaczyć swoje zadania, kalendarz i ustawić zdjęcie.');
+  const m=me();
+  if(m){const act=active(),now=act.filter(p=>actState(p)==='now').length,pc=pendingList().length;
+    h+=`<div class="admincard"><div><b>Panel ${m.role==='admin'?'administratora':'edytora'}</b><span>Zespół: ${act.length} ${act.length===1?'osoba':'osób'} · ${now} aktywnych teraz${pc?` · <b class="late">${pc} nowych zgłoszeń</b>`:''}</span></div><div class="ac-btns"><button class="btn primary" data-go="admin/zespol">👥 Uczestnicy i edycja</button><button class="btn" data-go="admin/zadania">Zadania</button></div></div>`}
+  else if(mb&&(mb.role==='admin'||mb.role==='editor'))h+=`<div class="admincard"><div><b>Jesteś ${mb.role==='admin'?'administratorem':'edytorem'}</b><span>Zaloguj się PIN-em, żeby widzieć uczestników, edytować ich profile i zarządzać zadaniami. Na każdym urządzeniu (także w aplikacji z ekranu początkowego) logujesz się osobno.</span></div><div class="ac-btns"><button class="btn primary" data-go="login">🔑 Zaloguj do panelu</button></div></div>`;
   if(!state.events.length&&!state.tasks.length)
     return h+`<div class="empty" style="margin-top:18px"><h3>Nie ma jeszcze żadnych wydarzeń</h3><p>Organizator doda je w panelu.</p></div>`;
   const used=Object.keys(TYPES).filter(k=>state.events.some(e=>typeOf(e)===k));
@@ -1030,6 +1051,8 @@ function vMe(){
   const tabs=[['zadania','Moje zadania'],['kalendarz','Mój kalendarz'],['profil','Profil']];
   let h=`<div class="profhead" style="--pc:${colorOf(p)}">${avatar(p,72)}<div><h2>${esc(p.name)}</h2><p>${[p.nick?'„'+esc(p.nick)+'”':'',esc(p.func||''),open?open+' do zrobienia':'wszystko zrobione'].filter(Boolean).join(' · ')}</p></div><button class="btn sm" data-notme>To nie ja</button></div>
   <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${ui.meTab===k}" data-go="me/${k}">${l}</button>`).join('')}</nav>`;
+  if(me())h+=`<div class="admincard slim"><div><b>Panel ${me().role==='admin'?'administratora':'edytora'}</b></div><div class="ac-btns"><button class="btn primary sm" data-go="admin/zespol">👥 Uczestnicy i edycja</button></div></div>`;
+  else if(p.role==='admin'||p.role==='editor')h+=`<div class="admincard slim"><div><b>Jesteś ${p.role==='admin'?'administratorem':'edytorem'}</b><span>Zaloguj się PIN-em, żeby zarządzać zespołem.</span></div><div class="ac-btns"><button class="btn primary sm" data-go="login">🔑 Zaloguj</button></div></div>`;
   h+=ui.meTab==='profil'?pushCard(false):pushCard(true);
   if(p.pending)h+=`<div class="banner">Twoje zgłoszenie czeka na zatwierdzenie przez organizatora. Do tego czasu możesz uzupełnić profil.</div>`;
   if(ui.meTab==='profil')return h+vProfile(p);
@@ -1068,7 +1091,7 @@ function vLogin(){
     <div class="two"><label class="fld">PIN<input class="in" name="p" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label><label class="fld">Powtórz PIN<input class="in" name="p2" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label></div>
     <p class="err">${esc(ui.loginErr)}</p><button class="btn primary">Utwórz konto</button></form></div>`;
   return `<div class="namebox center"><h3>Panel organizatora</h3><p>Dla edytorów i administratorów. Uczestnicy nie muszą się tu logować.</p>
-    <form id="loginForm" novalidate><label class="fld">Imię i nazwisko<input class="in" name="n" list="peopleList" autocomplete="name"></label>
+    <form id="loginForm" novalidate><label class="fld">Imię i nazwisko<input class="in" name="n" list="peopleList" autocomplete="name" value="${esc(member()&&member().role!=='member'?member().name:'')}"></label>
     <label class="fld">PIN<input class="in" name="p" type="password" inputmode="numeric" maxlength="12" autocomplete="current-password"></label>
     <p class="err">${esc(ui.loginErr)}</p><button class="btn primary">Zaloguj</button></form></div>`;
 }
