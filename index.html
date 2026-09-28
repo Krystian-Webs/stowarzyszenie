@@ -304,6 +304,33 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
 .asg.team{border-bottom:1px solid var(--line);border-radius:6px 6px 0 0;margin-bottom:4px;padding-bottom:8px}
 .asg small{color:var(--muted);font-weight:400}
 .asg.off{opacity:.45}
+
+.joinline{margin:12px 0 0!important;font-size:14px}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;margin-left:4px}
+.pendbox{border-color:var(--bib)}
+.pendbox .ghead{background:var(--bib-bg);color:var(--bib-ink)}
+.pendbox .row .main{cursor:default}
+.pcard .bd span.role-admin{color:var(--paper)}
+.pcard .bd span.role-editor{color:var(--bib-ink)}
+.pcard .bd span.role-member{color:var(--gray-ink)}
+
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:520px){.three{grid-template-columns:1fr 1fr}}
+.chip.multi{border-radius:0;margin-left:-6px;margin-right:-6px;width:calc(100% + 12px);padding-left:12px}
+.chip.multi.s{border-radius:4px 0 0 4px;margin-left:0;width:calc(100% + 6px);padding-left:6px}
+.chip.multi.e{border-radius:0 4px 4px 0;margin-right:0;width:calc(100% + 6px)}
+.chip.multi.s.e{border-radius:4px;width:100%}
+.mcell,.wcol{overflow:visible}
+.week .chip.multi{margin-left:-9px;margin-right:-9px;width:calc(100% + 18px)}
+.week .chip.multi.s{margin-left:0;width:calc(100% + 9px)}
+.week .chip.multi.e{margin-right:0;width:calc(100% + 9px)}
+.week .chip.multi.s.e{width:100%}
+.orgbar{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 14px}
+.orgbar .grow{font-size:14px;color:var(--muted)}
+.sched{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.sched .ptitle{margin-bottom:2px}
+.schedsub{margin:0 0 14px;color:var(--muted);font-size:14px}
+.undated{display:flex;flex-direction:column;gap:6px}
 </style>
 </head>
 <body>
@@ -324,10 +351,12 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
       <label class="fld">Wydarzenie<select class="in" name="event"></select></label>
     </div>
     <div class="fld"><span>Kto to robi</span><div class="assign" id="assignBox"></div><span class="hint" id="assignHint"></span></div>
-    <div class="two">
-      <label class="fld">Termin<input class="in" type="date" name="date"></label>
-      <label class="fld">Godzina<input class="in" type="time" name="time"></label>
+    <div class="three">
+      <label class="fld">Od<input class="in" type="date" name="date"></label>
+      <label class="fld">Do <small style="font-weight:400;color:var(--muted)">(kilka dni)</small><input class="in" type="date" name="endDate"></label>
+      <label class="fld" id="timeFld">Godzina<input class="in" type="time" name="time"></label>
     </div>
+    <p class="hint" style="margin:-4px 0 12px;font-size:13px;color:var(--muted)">Zadanie jednodniowe: wypełnij tylko „Od”. Kilkudniowe: ustaw też „Do”, a pojawi się na wszystkich dniach w kalendarzu.</p>
     <label class="fld">Opis<textarea class="in" name="notes" rows="3" placeholder="Szczegóły, ustalenia, kontakty"></textarea></label>
     <label class="chk"><input type="checkbox" name="done"> Zrobione</label>
     <div class="dacts">
@@ -470,6 +499,16 @@ function member(){return person(ls.get('ek-me'))||null}
 const tasksForEvent=id=>state.tasks.filter(t=>id==='_general'?!eventOf(t.eventId):t.eventId===id);
 function me(){const p=person(ls.get('ek-session'));return p&&(p.role==='editor'||p.role==='admin')?p:null}
 const isAdmin=()=>me()?.role==='admin';
+const tEnd=t=>t.endDate&&t.endDate>t.date?t.endDate:t.date;
+const isMulti=t=>!!t.date&&tEnd(t)!==t.date;
+const onDay=(t,d)=>!!t.date&&d>=t.date&&d<=tEnd(t);
+const isLate=t=>!t.done&&!!t.date&&tEnd(t)<today();
+function dueText(t,short){const o=short?{day:'numeric',month:'short'}:{day:'numeric',month:'long'};
+  if(isMulti(t))return fmt(t.date,o)+' – '+fmt(tEnd(t),o)+' ('+(daysBetween(t.date,tEnd(t))+1)+' dni)';
+  return 'do '+fmt(t.date,o)+(t.time?(short?' ':', ')+t.time:'')}
+function dueHtml(t,short){if(!t.date)return '';const l=isLate(t);return `<span class="${l?'late':''}">${l?'Po terminie · ':''}${isMulti(t)?'🗓 ':''}${dueText(t,short)}</span>`}
+const active=()=>state.people.filter(p=>!p.pending);
+const pendingList=()=>state.people.filter(p=>p.pending);
 const hasAdmin=()=>state.people.some(p=>p.role==='admin');
 
 /* ---------- storage ---------- */
@@ -515,6 +554,7 @@ function readHash(){
   const h=location.hash.replace(/^#\/?/,'').split('/');
   if(h[0]==='e'&&h[1]){ui.screen='event';ui.eventId=h[1]}
   else if(h[0]==='admin'){ui.screen='admin';if(h[1])ui.tab=h[1]}
+  else if(h[0]==='dolacz'){ui.screen='join'}
   else if(h[0]==='me'){ui.screen='me';if(h[1])ui.meTab=h[1]}
   else if(h[0]==='login'){ui.screen='login'}
   else ui.screen='home';
@@ -538,8 +578,8 @@ function buildICS(items){
   const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Event Kraft//Planer//PL','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+ORG];
   items.forEach(it=>{
     L.push('BEGIN:VEVENT','UID:'+it.uid+'@eventkraft','DTSTAMP:'+stamp);
-    if(it.time){const[ed,et]=endOf(it.date,it.time,it.endTime);L.push('DTSTART:'+compact(it.date)+'T'+hhmm(it.time),'DTEND:'+compact(ed)+'T'+hhmm(et))}
-    else L.push('DTSTART;VALUE=DATE:'+compact(it.date),'DTEND;VALUE=DATE:'+compact(ymd(addDays(parse(it.date),1))));
+    if(it.time&&!it.endDate){const[ed,et]=endOf(it.date,it.time,it.endTime);L.push('DTSTART:'+compact(it.date)+'T'+hhmm(it.time),'DTEND:'+compact(ed)+'T'+hhmm(et))}
+    else L.push('DTSTART;VALUE=DATE:'+compact(it.date),'DTEND;VALUE=DATE:'+compact(ymd(addDays(parse(it.endDate||it.date),1))));
     L.push('SUMMARY:'+icsEsc(it.title));
     if(it.place)L.push('LOCATION:'+icsEsc(it.place));
     L.push('DESCRIPTION:'+icsEsc([it.desc,it.url?'Szczegóły i zadania: '+it.url:''].filter(Boolean).join('\n\n')));
@@ -583,6 +623,7 @@ function render(){
   let h;
   if(ui.screen==='event')h=vEvent();
   else if(ui.screen==='me')h=vMe();
+  else if(ui.screen==='join')h=vJoin();
   else if(ui.screen==='login')h=(m?(setTimeout(()=>go('#/admin')),''):vLogin());
   else if(ui.screen==='admin')h=m?vAdmin():vLogin();
   else h=vHome();
@@ -591,7 +632,7 @@ function render(){
 function nameBox(title,sub){
   return `<div class="namebox"><h3>${title}</h3><p>${sub}</p>
     <form class="inrow nameForm" novalidate><input class="in" name="n" list="peopleList" autocomplete="name" placeholder="Anna Kowalska" aria-label="Imię i nazwisko"><button class="btn primary">Dalej</button></form>
-    <p class="err nameErr" style="margin:8px 0 0"></p></div>`;
+    <p class="err nameErr" style="margin:8px 0 0"></p><p class="joinline">Nie ma Cię jeszcze w zespole? <button class="linklike" data-go="dolacz">Dołącz</button></p></div>`;
 }
 function dateBox(e){
   if(!e)return `<div class="evdate gen">EK</div>`;
@@ -636,28 +677,59 @@ function whoBadges(t,pid){
   return `<span class="wtag shared">👥 Wspólne: ${a.filter(id=>id!==pid).map(id=>esc(shortName(person(id)))).join(', ')}</span>`;
 }
 function myTaskRow(t,pid,showEvent){
-  const late=!t.done&&t.date&&t.date<today(),c=isShared(t)?'var(--shared)':colorOf(person(pid));
+  const c=isShared(t)?'var(--shared)':colorOf(person(pid));
   const by=t.done&&t.doneBy&&t.doneBy!==pid&&person(t.doneBy)?` · odhaczył(a) ${esc(shortName(person(t.doneBy)))}`:'';
   return `<label class="mytask ${t.done?'done':''}" style="--pc:${c}"><input type="checkbox" data-toggle="${t.id}" ${t.done?'checked':''}><div><b>${esc(t.title)}</b>
-   <span class="mt-meta">${whoBadges(t,pid)}${showEvent?`<span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>`:''}${t.date?`<span class="${late?'late':''}">${late?'Po terminie · ':''}do ${fmt(t.date,{day:'numeric',month:'long'})}${t.time?', '+t.time:''}</span>`:''}${by}</span>${t.notes?`<span class="notes">${esc(t.notes)}</span>`:''}</div></label>`;
+   <span class="mt-meta">${whoBadges(t,pid)}${showEvent?`<span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>`:''}${dueHtml(t)}${by}</span>${t.notes?`<span class="notes">${esc(t.notes)}</span>`:''}</div></label>`;
 }
 function vEvent(){
   const id=ui.eventId,e=eventOf(id);
   if(id!=='_general'&&!e)return `<div class="empty"><h3>Nie ma takiego wydarzenia</h3><p>Mogło zostać usunięte albo link jest niepełny.</p><button class="btn primary" data-go="home">Wszystkie wydarzenia</button></div>`;
+  const evTasks=tasksForEvent(id);
+  if(ui.evCursorFor!==id){ui.evCursorFor=id;ui.pview='month';
+    const first=evTasks.filter(t=>t.date&&!t.done&&tEnd(t)>=today()).sort(sortByDate)[0];
+    const d=first?first.date:(e&&e.date?e.date:'');ui.cursor=d&&d>today()?parse(d):new Date()}
   const meta=e?[e.date?fmt(e.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(e.time?', godz. '+e.time+(e.endTime&&e.endTime>e.time?'–'+e.endTime:''):''):'',e.place].filter(Boolean).map(esc).join(' · '):'Zadania stałe, niezwiązane z konkretnym wydarzeniem';
   let h=`<p style="margin:0 0 12px"><button class="linklike" data-go="home">‹ Wszystkie wydarzenia</button></p>
   <div class="hero">${e?`<div class="tline" style="margin-bottom:6px">${typeTag(e)}${e.date?`<span class="soon">${soon(e.date)}</span>`:''}</div>`:''}<h2>${e?esc(e.name):'Stowarzyszenie'}</h2><div class="meta">${meta}</div>${e&&e.desc?`<p class="desc">${esc(e.desc)}</p>`:''}${calButtons(e)}</div>`;
+  if(me())h+=`<div class="bar orgbar"><span class="grow">Jesteś organizatorem:</span><button class="btn primary" data-new="task" data-ev="${id}">Dodaj zadanie do tego wydarzenia</button>${e?`<button class="btn" data-edit-event="${e.id}">Edytuj wydarzenie</button>`:''}</div>`;
   const p=member();
-  if(!p)return h+nameBox('Kim jesteś?','Wpisz imię i nazwisko, żeby zobaczyć swoje zadania przy tym wydarzeniu.');
-  const mine=tasksForEvent(id).filter(t=>isMine(t,p.id)).sort((a,b)=>(a.done-b.done)||sortByDate(a,b));
-  const done=mine.filter(t=>t.done).length;
-  h+=`<div class="mehead">${avatar(p,48)}<div style="flex:1;min-width:180px"><b style="font-size:18px">Twoje zadania</b>
-    ${mine.length?`<div class="prog" style="max-width:280px"><i style="width:${Math.round(done/mine.length*100)}%;background:${colorOf(p)}"></i></div><span style="color:var(--muted);font-size:14px">${done} z ${mine.length} zrobione</span>`:''}</div>
-    <button class="btn sm" data-go="me">Moje konto</button><button class="btn sm" data-notme>To nie ja</button></div>`;
-  if(!mine.length)return h+`<div class="empty"><h3>Nie masz zadań przy tym wydarzeniu</h3><p>Jeśli to pomyłka, odezwij się do koordynatora.</p></div>`;
-  if(mine.some(t=>t.date&&!t.done))h+=`<div class="calrow" style="margin:0 0 14px"><span>Terminy tych zadań:</span><button class="btn sm" data-ics="mine:${id}">Dodaj do kalendarza</button></div>`;
-  if(done===mine.length)h+=`<div class="banner" style="background:var(--moss-bg);color:var(--moss-ink)">Wszystko zrobione. Dziękujemy!</div>`;
-  return h+mine.map(t=>myTaskRow(t,p.id,false)).join('');
+  if(!p)h+=nameBox('Kim jesteś?','Wpisz imię i nazwisko, żeby zobaczyć swoje zadania przy tym wydarzeniu.');
+  else{
+    const mine=evTasks.filter(t=>isMine(t,p.id)).sort((a,b)=>(a.done-b.done)||sortByDate(a,b));
+    const done=mine.filter(t=>t.done).length;
+    h+=`<div class="mehead">${avatar(p,48)}<div style="flex:1;min-width:180px"><b style="font-size:18px">Twoje zadania</b>
+      ${mine.length?`<div class="prog" style="max-width:280px"><i style="width:${Math.round(done/mine.length*100)}%;background:${colorOf(p)}"></i></div><span style="color:var(--muted);font-size:14px">${done} z ${mine.length} zrobione</span>`:''}</div>
+      <button class="btn sm" data-go="me">Moje konto</button><button class="btn sm" data-notme>To nie ja</button></div>`;
+    if(!mine.length)h+=`<div class="empty"><h3>Nie masz zadań przy tym wydarzeniu</h3><p>Jeśli to pomyłka, odezwij się do koordynatora.</p></div>`;
+    else{
+      if(mine.some(t=>t.date&&!t.done))h+=`<div class="calrow" style="margin:0 0 14px"><span>Terminy tych zadań:</span><button class="btn sm" data-ics="mine:${id}">Dodaj do kalendarza</button></div>`;
+      if(done===mine.length)h+=`<div class="banner" style="background:var(--moss-bg);color:var(--moss-ink)">Wszystko zrobione. Dziękujemy!</div>`;
+      h+=mine.map(t=>myTaskRow(t,p.id,false)).join('');
+    }
+  }
+  const dated=evTasks.filter(t=>t.date),undated=evTasks.filter(t=>!t.date);
+  h+=`<div class="sched"><h2 class="ptitle">Harmonogram ${e?'wydarzenia':'zadań'}</h2><p class="schedsub">${evTasks.length?`Wszystkie zadania (${evTasks.length}), ${evTasks.filter(t=>t.done).length} zrobione. Zadania kilkudniowe są rozciągnięte na kolejne dni.`:'Nie ma jeszcze zadań.'}</p>`;
+  if(dated.length||(e&&e.date)){
+    const inv=[...new Set(evTasks.flatMap(assignees))].map(person).filter(Boolean);
+    h+=legendList(inv,evTasks.some(isShared),!!(e&&e.date))+planner({ev:id,pid:null});
+  }else if(me())h+=`<div class="empty"><h3>Dodaj pierwsze zadanie</h3><p>Zadania z datą pojawią się tutaj w kalendarzu.</p><button class="btn primary" data-new="task" data-ev="${id}">Dodaj zadanie</button></div>`;
+  if(undated.length)h+=`<p class="sect">Bez terminu (${undated.length})</p><div class="undated">${undated.map(t=>`<button class="item task-item ${t.done?'isdone':''}" style="--pc:${taskColor(t)}" ${me()?`data-edit="${t.id}"`:''}><span class="tt"><b>${esc(t.title)}</b><span>${isShared(t)?'👥 ':''}${esc(whoLabel(t))}</span></span></button>`).join('')}</div>`;
+  return h+'</div>';
+}
+
+/* ---------- dołączanie ---------- */
+let joinPhoto='';
+function vJoin(){
+  if(member())return `<div class="namebox center"><h3>Jesteś już w zespole</h3><p>Zalogowano jako ${esc(member().name)}.</p><div class="inrow"><button class="btn primary" data-go="me">Moje konto</button><button class="btn" data-notme>To nie ja</button></div></div>`;
+  return `<form id="joinForm" class="namebox center" novalidate style="max-width:560px"><h3>Dołącz do zespołu ${ORG}</h3><p>Po zgłoszeniu organizator zatwierdzi Cię i zacznie przypisywać zadania.</p>
+    <div class="photo"><div class="av" id="joinPrev" style="width:84px;height:84px;font-size:28px">?</div><div><label class="btn sm" style="display:inline-block">Dodaj zdjęcie<input type="file" accept="image/*" id="joinPhoto" hidden></label><span class="hint" style="display:block;margin-top:4px">Nieobowiązkowe</span></div></div>
+    <label class="fld">Imię i nazwisko<input class="in" name="name" maxlength="60" autocomplete="name" value="${esc(ui.prefill||'')}" placeholder="Anna Kowalska"><span class="hint">Będziesz się nim wpisywać przy kolejnych wizytach.</span></label>
+    <label class="fld">Pseudonim<input class="in" name="nick" maxlength="30" placeholder="Ania"><span class="hint">Nieobowiązkowe.</span></label>
+    <label class="fld">Telefon lub e-mail<input class="in" name="contact" maxlength="80" placeholder="600 100 200"><span class="hint">Nieobowiązkowe. Widzi go tylko organizator, żeby mógł się z Tobą skontaktować.</span></label>
+    <div class="fld"><span>Twój kolor w kalendarzu</span>${swatches('color',nextColor())}</div>
+    <p class="err" id="joinErr"></p>
+    <div class="dacts"><button type="button" class="btn" data-go="home">Anuluj</button><button class="btn primary">Wyślij zgłoszenie</button></div></form>`;
 }
 
 /* ---------- moje konto ---------- */
@@ -668,8 +740,9 @@ function vMe(){
   const tabs=[['zadania','Moje zadania'],['kalendarz','Mój kalendarz'],['profil','Profil']];
   let h=`<div class="profhead" style="--pc:${colorOf(p)}">${avatar(p,72)}<div><h2>${esc(p.name)}</h2><p>${[p.nick?'„'+esc(p.nick)+'”':'',esc(p.func||''),open?open+' do zrobienia':'wszystko zrobione'].filter(Boolean).join(' · ')}</p></div><button class="btn sm" data-notme>To nie ja</button></div>
   <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${ui.meTab===k}" data-go="me/${k}">${l}</button>`).join('')}</nav>`;
+  if(p.pending)h+=`<div class="banner">Twoje zgłoszenie czeka na zatwierdzenie przez organizatora. Do tego czasu możesz uzupełnić profil.</div>`;
   if(ui.meTab==='profil')return h+vProfile(p);
-  if(ui.meTab==='kalendarz')return h+legend(p)+planner(p.id);
+  if(ui.meTab==='kalendarz')return h+legend(p)+planner({pid:p.id});
   const mine=state.tasks.filter(t=>isMine(t,p.id));
   if(!mine.length)return h+`<div class="empty"><h3>Nie masz jeszcze żadnych zadań</h3><p>Gdy koordynator coś Ci przypisze, pojawi się tutaj.</p></div>`;
   const todo=mine.filter(t=>!t.done).sort(sortByDate),done=mine.filter(t=>t.done).sort(sortByDate);
@@ -688,8 +761,11 @@ function vProfile(p){
     <div class="fld"><span>Twój kolor w kalendarzu</span>${swatches('color',colorOf(p))}</div>
     <div class="dacts"><button class="btn primary">Zapisz profil</button></div></form>`;
 }
+function legendList(people,shared,events){
+  return `<div class="legend">${people.map(x=>`<span><i style="background:${colorOf(x)}"></i>${esc(shortName(x))}</span>`).join('')}${shared?`<span><i style="background:var(--shared)"></i>Wspólne</span>`:''}${events?`<span><i class="evl"></i>Wydarzenie</span>`:''}</div>`;
+}
 function legend(p){
-  const people=p?[p]:state.people;
+  const people=p?[p]:active();
   return `<div class="legend">${people.map(x=>`<span><i style="background:${colorOf(x)}"></i>${esc(p?'Moje zadania':shortName(x))}</span>`).join('')}<span><i style="background:var(--shared)"></i>Wspólne</span><span><i class="evl"></i>Wydarzenia</span></div>`;
 }
 
@@ -707,26 +783,27 @@ function vLogin(){
 
 /* ---------- panel ---------- */
 function vAdmin(){
-  const tabs=[['zadania','Zadania'],['wydarzenia','Wydarzenia'],['planer','Kalendarz'],['zespol','Zespół i role']];
+  const pc=pendingList().length;
+  const tabs=[['zadania','Zadania'],['wydarzenia','Wydarzenia'],['planer','Kalendarz'],['zespol','Zespół i role'+(pc?` <span class="badge">${pc}</span>`:'')]];
   return `<div class="bar"><button class="btn primary" data-new="task">Dodaj zadanie</button><button class="btn" data-new="event">Dodaj wydarzenie</button><button class="btn" data-new="person">Dodaj osobę</button></div>
   <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${ui.tab===k}" data-go="admin/${k}">${l}</button>`).join('')}</nav>`+
   ({zadania:aTasks,wydarzenia:aEvents,planer:aPlanner,zespol:aTeam}[ui.tab]||aTasks)();
 }
 function evOptions(sel,withAll){return (withAll?`<option value="all" ${sel==='all'?'selected':''}>Wszystkie wydarzenia</option>`:'')+`<option value="_general" ${sel==='_general'?'selected':''}>Stowarzyszenie (ogólne)</option>`+state.events.slice().sort(sortByDate).map(e=>`<option value="${e.id}" ${sel===e.id?'selected':''}>${esc(e.name)}</option>`).join('')}
 function adminRow(t,ctxPid){
-  const late=!t.done&&t.date&&t.date<today(),c=isShared(t)?'var(--shared)':colorOf(person(assignees(t)[0]));
-  return `<div class="row ${t.done?'done':''}" style="box-shadow:inset 4px 0 0 ${isUnassigned(t)?'transparent':c}"><input type="checkbox" ${t.done?'checked':''} data-toggle="${t.id}" aria-label="Zrobione"><button class="main" data-edit="${t.id}"><span class="t">${esc(t.title)}</span><span class="meta"><span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>${whoBadges(t,ctxPid)}${t.date?`<span class="${late?'late':''}">${late?'Po terminie · ':''}do ${fmt(t.date,{day:'numeric',month:'short'})}${t.time?' '+t.time:''}</span>`:''}</span></button></div>`;
+  const c=isShared(t)?'var(--shared)':colorOf(person(assignees(t)[0]));
+  return `<div class="row ${t.done?'done':''}" style="box-shadow:inset 4px 0 0 ${isUnassigned(t)?'transparent':c}"><input type="checkbox" ${t.done?'checked':''} data-toggle="${t.id}" aria-label="Zrobione"><button class="main" data-edit="${t.id}"><span class="t">${esc(t.title)}</span><span class="meta"><span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>${whoBadges(t,ctxPid)}${dueHtml(t,true)}</span></button></div>`;
 }
 function aTasks(){
   const all=state.tasks;
   if(!all.length)return `<div class="empty"><h3>Dodaj pierwsze zadanie</h3><p>Przypisz je do jednej osoby, kilku albo całego zespołu.</p><button class="btn primary" data-new="task">Dodaj zadanie</button></div>`;
   const list=all.filter(t=>(ui.showDone||!t.done)&&(ui.fEvent==='all'||(ui.fEvent==='_general'?!eventOf(t.eventId):t.eventId===ui.fEvent)));
   const bar=`<div class="bar"><select class="in" id="fEvent" aria-label="Wydarzenie">${evOptions(ui.fEvent,true)}</select>
-    <select class="in" id="fPerson" aria-label="Osoba"><option value="all">Wszyscy</option>${state.people.map(p=>`<option value="${p.id}" ${ui.fPerson===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}<option value="none" ${ui.fPerson==='none'?'selected':''}>Nieprzypisane</option></select>
+    <select class="in" id="fPerson" aria-label="Osoba"><option value="all">Wszyscy</option>${active().map(p=>`<option value="${p.id}" ${ui.fPerson===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}<option value="none" ${ui.fPerson==='none'?'selected':''}>Nieprzypisane</option></select>
     <label class="chk"><input type="checkbox" id="showDone" ${ui.showDone?'checked':''}> Pokaż zrobione</label></div>`;
   let groups=[];
   if(ui.fPerson==='all'||ui.fPerson==='team')groups.push({team:true,items:list.filter(t=>t.all)});
-  state.people.forEach(p=>{if(ui.fPerson==='all'||ui.fPerson===p.id)groups.push({p,items:list.filter(t=>!t.all&&assignees(t).includes(p.id))})});
+  active().forEach(p=>{if(ui.fPerson==='all'||ui.fPerson===p.id)groups.push({p,items:list.filter(t=>!t.all&&assignees(t).includes(p.id))})});
   if(ui.fPerson==='all'||ui.fPerson==='none')groups.push({none:true,items:list.filter(isUnassigned)});
   groups=groups.filter(g=>g.items.length);
   if(!groups.length)return bar+`<div class="empty"><h3>Nic tu nie ma</h3><p>Zmień filtry albo zaznacz „Pokaż zrobione”.</p></div>`;
@@ -747,48 +824,57 @@ function aEvents(){
 }
 function aTeam(){
   const help=`<div class="roles-help"><b>Członek</b> wpisuje imię, ma swoje konto z zadaniami i kalendarzem, może zmienić zdjęcie, pseudonim i kolor. <b>Edytor</b> loguje się PIN-em do panelu i zarządza zadaniami, wydarzeniami i członkami. <b>Administrator</b> ma pełny dostęp, w tym nadawanie ról i PIN-ów.</div>`;
-  const cards=state.people.map(p=>{const open=state.tasks.filter(t=>isMine(t,p.id)&&!t.done).length;
-    return `<article class="pcard" style="--pc:${colorOf(p)}"><button class="ph" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</button><div class="bd"><b>${esc(p.name)}</b>${p.nick?`<span>„${esc(p.nick)}”</span>`:''}<span>${esc(p.func||'')}</span><span><span class="role role-${p.role||'member'}">${ROLES[p.role]||ROLES.member}</span></span><span>${open} ${open===1?'zadanie':'zadań'} do zrobienia</span><button class="btn sm" data-show-person="${p.id}">Pokaż zadania</button></div></article>`}).join('');
-  return help+`<div class="team">${cards}<button class="pcard add" data-new="person"><span class="plus">+</span>Dodaj osobę</button></div>`;
+  const cards=active().map(p=>{const open=state.tasks.filter(t=>isMine(t,p.id)&&!t.done).length;
+    return `<article class="pcard" style="--pc:${colorOf(p)}"><button class="ph" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</button><div class="bd"><b>${esc(p.name)}</b>${p.nick?`<span>„${esc(p.nick)}”</span>`:''}<span>${esc(p.func||'')}</span>${p.contact?`<span>${esc(p.contact)}</span>`:''}<span><span class="role role-${p.role||'member'}">${ROLES[p.role]||ROLES.member}</span></span><span>${open} ${open===1?'zadanie':'zadań'} do zrobienia</span><button class="btn sm" data-show-person="${p.id}">Pokaż zadania</button></div></article>`}).join('');
+  const pend=pendingList();
+  const invite=`<div class="calrow" style="margin:0 0 16px"><span>Link, przez który ludzie sami dołączają do zespołu:</span><button class="btn sm" data-copy-join>Kopiuj link zaproszenia</button></div>`;
+  const pendH=pend.length?`<section class="group pendbox"><div class="ghead"><h3>Nowe zgłoszenia (${pend.length})</h3></div>${pend.map(p=>`<div class="row" style="align-items:center">${avatar(p,40)}<div class="main"><span class="t">${esc(dispName(p))}</span><span class="meta">${p.contact?esc(p.contact)+' · ':''}zgłoszenie ${p.joinedAt?fmt(new Date(p.joinedAt),{day:'numeric',month:'long'}):''}</span></div><button class="btn sm primary" data-accept="${p.id}">Zatwierdź</button><button class="btn sm danger" data-reject="${p.id}">Odrzuć</button></div>`).join('')}</section>`:'';
+  return help+invite+pendH+`<div class="team">${cards}<button class="pcard add" data-new="person"><span class="plus">+</span>Dodaj osobę</button></div>`;
 }
 function aPlanner(){
-  const sel=`<select class="in" id="fCal" aria-label="Czyj kalendarz"><option value="all">Wszyscy</option>${state.people.map(p=>`<option value="${p.id}" ${ui.fCal===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}</select>`;
+  const sel=`<select class="in" id="fCal" aria-label="Czyj kalendarz"><option value="all">Wszyscy</option>${active().map(p=>`<option value="${p.id}" ${ui.fCal===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}</select>`;
   const pid=ui.fCal!=='all'&&person(ui.fCal)?ui.fCal:null;
-  return `<div class="bar"><span style="font-size:14px;color:var(--muted)">Pokaż kalendarz:</span>${sel}</div>`+legend(pid?person(pid):null)+planner(pid);
+  return `<div class="bar"><span style="font-size:14px;color:var(--muted)">Pokaż kalendarz:</span>${sel}</div>`+legend(pid?person(pid):null)+planner({pid});
 }
 
 /* ---------- kalendarz (widoki) ---------- */
-function itemsOn(d,pid){
-  const ev=state.events.filter(e=>e.date===d).map(e=>({...e,isEvent:true,title:e.name}));
-  return ev.concat(state.tasks.filter(t=>t.date===d&&(!pid||isMine(t,pid))).sort(sortByDate));
+function itemsOn(d,o={}){
+  const ev=state.events.filter(e=>e.date===d&&(!o.ev||e.id===o.ev)).map(e=>({...e,isEvent:true,title:e.name}));
+  const inEv=t=>!o.ev||(o.ev==='_general'?!eventOf(t.eventId):t.eventId===o.ev);
+  return ev.concat(state.tasks.filter(t=>onDay(t,d)&&(!o.pid||isMine(t,o.pid))&&inEv(t)).sort((a,b)=>(isMulti(b)-isMulti(a))||sortByDate(a,b)||(a.id<b.id?-1:1)));
 }
 function taskColor(t,pid){if(isShared(t))return 'var(--shared)';const a=assignees(t);if(!a.length)return 'var(--muted)';return colorOf(person(pid&&a.includes(pid)?pid:a[0]))}
-function chip(t,pid){
+function taskAttr(t){return me()?`data-edit="${t.id}"`:(member()&&isMine(t,member().id)?`data-go="me/zadania"`:'')}
+function chip(t,o,d){
   if(t.isEvent)return `<button class="chip ev-chip t-${typeOf(t)}" ${me()?`data-edit-event="${t.id}"`:`data-go="e/${t.id}"`} title="${esc(t.title)}">${TYPES[typeOf(t)].i} ${t.time?`<span class="tm">${t.time}</span>`:''}${esc(t.title)}</button>`;
-  const lbl=isShared(t)?'👥 ':(!pid&&assignees(t).length?esc(shortName(person(assignees(t)[0])))+': ':'');
-  return `<button class="chip task ${t.done?'done':''}" style="--pc:${taskColor(t,pid)}" ${me()?`data-edit="${t.id}"`:`data-go="me/zadania"`} title="${esc(t.title+' – '+whoLabel(t))}">${t.time?`<span class="tm">${t.time}</span>`:''}${lbl}${esc(t.title)}</button>`;
+  const multi=isMulti(t),st=d===t.date,en=d===tEnd(t),show=!multi||st||parse(d).getDay()===1;
+  const lbl=isShared(t)?'👥 ':(!o.pid&&assignees(t).length?esc(shortName(person(assignees(t)[0])))+': ':'');
+  const tip=t.title+' – '+whoLabel(t)+(multi?' ('+dueText(t,true)+')':'');
+  return `<button class="chip task ${t.done?'done':''} ${multi?'multi':''} ${multi&&st?'s':''} ${multi&&en?'e':''}" style="--pc:${taskColor(t,o.pid)}" ${taskAttr(t)} title="${esc(tip)}">${show?`${t.time&&!multi?`<span class="tm">${t.time}</span>`:''}${lbl}${esc(t.title)}`:'&nbsp;'}</button>`;
 }
-function itemBtn(t,pid){
+function itemBtn(t,o){
   if(t.isEvent)return `<button class="item ev-item t-${typeOf(t)}" ${me()?`data-edit-event="${t.id}"`:`data-go="e/${t.id}"`}><span class="tm">${t.time||TYPES[typeOf(t)].i}</span><span class="tt"><b>${esc(t.title)}</b><span>${TYPES[typeOf(t)].l}${t.place?' · '+esc(t.place):''}</span></span></button>`;
-  return `<button class="item task-item ${t.done?'isdone':''}" style="--pc:${taskColor(t,pid)}" ${me()?`data-edit="${t.id}"`:`data-go="me/zadania"`}><span class="tm">${t.time||'–'}</span><span class="tt"><b>${esc(t.title)}</b><span>${esc(evName(t.eventId))} · ${isShared(t)?'👥 ':''}${esc(whoLabel(t))}</span></span></button>`;
+  return `<button class="item task-item ${t.done?'isdone':''}" style="--pc:${taskColor(t,o.pid)}" ${taskAttr(t)}><span class="tm">${isMulti(t)?'🗓':t.time||'–'}</span><span class="tt"><b>${esc(t.title)}</b><span>${o.ev?'':esc(evName(t.eventId))+' · '}${isShared(t)?'👥 ':''}${esc(whoLabel(t))}${isMulti(t)?' · '+dueText(t,true):''}</span></span></button>`;
 }
-function planner(pid){
+function planner(o={}){
   const c=ui.cursor,v=ui.pview;let title='',body='';
   if(v==='day'){
-    const d=ymd(c);title=fmt(c,{weekday:'long',day:'numeric',month:'long',year:'numeric'});const l=itemsOn(d,pid);
-    body=(l.length?`<div style="display:flex;flex-direction:column;gap:6px">${l.map(t=>itemBtn(t,pid)).join('')}</div>`:`<div class="empty"><h3>Wolny dzień</h3><p>Nic nie jest zaplanowane na ten dzień.</p></div>`)+
-      (me()?`<div class="bar" style="margin-top:14px"><button class="btn" data-new="task" data-date="${d}">Dodaj zadanie na ten dzień</button><button class="btn" data-new="event" data-date="${d}">Dodaj wydarzenie</button></div>`:'');
+    const d=ymd(c);title=fmt(c,{weekday:'long',day:'numeric',month:'long',year:'numeric'});const l=itemsOn(d,o);
+    body=(l.length?`<div style="display:flex;flex-direction:column;gap:6px">${l.map(t=>itemBtn(t,o)).join('')}</div>`:`<div class="empty"><h3>Wolny dzień</h3><p>Nic nie jest zaplanowane na ten dzień.</p></div>`)+
+      (me()?`<div class="bar" style="margin-top:14px"><button class="btn" data-new="task" data-date="${d}" data-ev="${o.ev||''}">Dodaj zadanie na ten dzień</button>${o.ev?'':`<button class="btn" data-new="event" data-date="${d}">Dodaj wydarzenie</button>`}</div>`:'');
   }else if(v==='week'){
     const s=weekStart(c),e=addDays(s,6);title=`${fmt(s,{day:'numeric',month:'short'})} – ${fmt(e,{day:'numeric',month:'short',year:'numeric'})}`;
-    body='<div class="week">'+[...Array(7)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd);return `<div class="wcol ${d===today()?'today':''}"><button class="dhead" data-day="${d}"><small>${WD[i]}</small><b>${dd.getDate()}</b></button>${itemsOn(d,pid).map(t=>chip(t,pid)).join('')}</div>`}).join('')+'</div>';
+    body='<div class="week">'+[...Array(7)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd);return `<div class="wcol ${d===today()?'today':''}"><button class="dhead" data-day="${d}"><small>${WD[i]}</small><b>${dd.getDate()}</b></button>${itemsOn(d,o).map(t=>chip(t,o,d)).join('')}</div>`}).join('')+'</div>';
   }else if(v==='month'){
     title=fmt(c,{month:'long',year:'numeric'});const s=weekStart(new Date(c.getFullYear(),c.getMonth(),1));
-    body='<div class="month">'+WD.map(w=>`<div class="wd">${w}</div>`).join('')+[...Array(42)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd),it=itemsOn(d,pid);
-      return `<div class="mcell ${dd.getMonth()!==c.getMonth()?'out':''} ${d===today()?'today':''}"><button class="dn" data-day="${d}">${dd.getDate()}</button>${it.slice(0,3).map(t=>chip(t,pid)).join('')}${it.length>3?`<button class="more" data-day="${d}">+${it.length-3} więcej</button>`:''}<div class="dots">${it.map(t=>`<span class="dot ${t.isEvent?'t-'+typeOf(t):''}" style="${t.isEvent?'':'background:'+taskColor(t,pid)}"></span>`).join('')}</div></div>`}).join('')+'</div>';
+    body='<div class="month">'+WD.map(w=>`<div class="wd">${w}</div>`).join('')+[...Array(42)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd),it=itemsOn(d,o);
+      return `<div class="mcell ${dd.getMonth()!==c.getMonth()?'out':''} ${d===today()?'today':''}"><button class="dn" data-day="${d}">${dd.getDate()}</button>${it.slice(0,3).map(t=>chip(t,o,d)).join('')}${it.length>3?`<button class="more" data-day="${d}">+${it.length-3} więcej</button>`:''}<div class="dots">${it.map(t=>`<span class="dot ${t.isEvent?'t-'+typeOf(t):''}" style="${t.isEvent?'':'background:'+taskColor(t,o.pid)}"></span>`).join('')}</div></div>`}).join('')+'</div>';
   }else{
     const y=c.getFullYear();title=String(y);
-    const tmap=new Map();state.tasks.filter(t=>t.date&&(!pid||isMine(t,pid))).forEach(t=>{if(!tmap.has(t.date))tmap.set(t.date,taskColor(t,pid))});
-    const ed=new Map(state.events.filter(e=>e.date).map(e=>[e.date,typeOf(e)]));
+    const tmap=new Map();
+    state.tasks.filter(t=>t.date&&(!o.pid||isMine(t,o.pid))&&(!o.ev||(o.ev==='_general'?!eventOf(t.eventId):t.eventId===o.ev))).forEach(t=>{
+      for(let d=t.date,n=0;d<=tEnd(t)&&n<400;d=ymd(addDays(parse(d),1)),n++)if(!tmap.has(d))tmap.set(d,taskColor(t,o.pid))});
+    const ed=new Map(state.events.filter(e=>e.date&&(!o.ev||e.id===o.ev)).map(e=>[e.date,typeOf(e)]));
     body='<div class="year">'+[...Array(12)].map((_,m)=>{const f=new Date(y,m,1),off=(f.getDay()+6)%7,n=new Date(y,m+1,0).getDate();
       return `<div class="ymon"><h4><button data-month="${m}">${fmt(f,{month:'long'})}</button></h4><div class="ygrid">${WD.map(w=>`<span class="h">${w[0]}</span>`).join('')}${'<span></span>'.repeat(off)}${[...Array(n)].map((_,i)=>{const d=ymd(new Date(y,m,i+1));
         const cls=ed.has(d)?'race t-'+ed.get(d):tmap.has(d)?'has':'';const st=!ed.has(d)&&tmap.has(d)?` style="background:${tmap.get(d)};color:#fff"`:'';
@@ -814,10 +900,10 @@ function openTask(t,preset={}){
   f.event.innerHTML=evOptions(eventOf(d.eventId)?d.eventId:'_general');
   const ids=assignees(d);
   $('#assignBox').innerHTML=`<label class="asg team"><input type="checkbox" name="all" ${d.all?'checked':''}><span class="av" style="width:28px;height:28px;background:var(--shared);color:var(--paper);font-size:14px">👥</span><span>Cały zespół <small>(wspólne)</small></span></label>`+
-    state.people.map(p=>`<label class="asg"><input type="checkbox" name="pid" value="${p.id}" ${ids.includes(p.id)?'checked':''}><span class="avwrap" style="--pc:${colorOf(p)}">${avatar(p,28)}</span><span>${esc(dispName(p))}</span></label>`).join('')+
-    (state.people.length?'':`<p class="hint">Najpierw dodaj osoby w zakładce Zespół.</p>`);
+    active().map(p=>`<label class="asg"><input type="checkbox" name="pid" value="${p.id}" ${ids.includes(p.id)?'checked':''}><span class="avwrap" style="--pc:${colorOf(p)}">${avatar(p,28)}</span><span>${esc(dispName(p))}</span></label>`).join('')+
+    (active().length?'':`<p class="hint">Najpierw dodaj osoby w zakładce Zespół.</p>`);
   syncAssign();
-  f.title.value=d.title;f.date.value=d.date||'';f.time.value=d.time||'';f.notes.value=d.notes||'';f.done.checked=!!d.done;
+  f.title.value=d.title;f.date.value=d.date||'';f.endDate.value=d.endDate&&d.endDate>d.date?d.endDate:'';f.time.value=d.time||'';f.notes.value=d.notes||'';f.done.checked=!!d.done;
   $('#taskDel').style.display=t?'':'none';$('#taskErr').textContent='';$('#taskDlg').showModal();f.title.focus();
 }
 function syncAssign(){const all=$('#taskForm').querySelector('[name=all]');if(!all)return;
@@ -828,9 +914,13 @@ $('#taskForm').addEventListener('change',e=>{if(e.target.name==='all'||e.target.
 $('#taskForm').title.addEventListener('input',()=>$('#taskErr').textContent='');
 $('#taskForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,title=f.title.value.trim();
   if(!title){$('#taskErr').textContent='Wpisz, co jest do zrobienia.';f.title.focus();return}
+  let sd=f.date.value,ed=f.endDate.value;
+  if(ed&&!sd){sd=ed;ed=''}
+  if(ed&&ed<sd){$('#taskErr').textContent='Data „do” nie może być wcześniejsza niż „od”.';f.endDate.focus();return}
+  if(ed===sd)ed='';
   const all=f.querySelector('[name=all]').checked,ids=all?[]:[...f.querySelectorAll('[name=pid]:checked')].map(x=>x.value);
   const done=f.done.checked;
-  const t={id:editTask?editTask.id:uid(),title,eventId:f.event.value==='_general'?'':f.event.value,personIds:ids,all,date:f.date.value,time:f.time.value,notes:f.notes.value.trim(),done,doneBy:done?(editTask?.done?editTask.doneBy||'':me()?.id||''):'',created:editTask?.created||Date.now()};
+  const t={id:editTask?editTask.id:uid(),title,eventId:f.event.value==='_general'?'':f.event.value,personIds:ids,all,date:sd,endDate:ed,time:ed?'':f.time.value,notes:f.notes.value.trim(),done,doneBy:done?(editTask?.done?editTask.doneBy||'':me()?.id||''):'',created:editTask?.created||Date.now()};
   if(await put('tasks',t)){$('#taskDlg').close();toast(editTask?'Zapisano zmiany':'Dodano zadanie')}});
 $('#taskDel').addEventListener('click',async()=>{if(editTask&&confirm('Usunąć zadanie „'+editTask.title+'”?')&&await del('tasks',editTask.id)){$('#taskDlg').close();toast('Usunięto')}});
 
@@ -886,8 +976,13 @@ document.addEventListener('submit',async e=>{
   if(f.classList.contains('nameForm')){e.preventDefault();const n=norm(f.n.value),errEl=f.parentElement.querySelector('.nameErr');
     if(!n){errEl.textContent='Wpisz imię i nazwisko.';return}
     const p=state.people.find(x=>norm(x.name)===n)||(()=>{const byNick=state.people.filter(x=>x.nick&&norm(x.nick)===n);return byNick.length===1?byNick[0]:null})();
-    if(!p){errEl.textContent='Nie ma takiej osoby na liście. Sprawdź pisownię albo poproś koordynatora o dodanie.';return}
+    if(!p){ui.prefill=f.n.value.trim();errEl.innerHTML='Nie ma takiej osoby na liście. Sprawdź pisownię albo <button type="button" class="linklike" data-go="dolacz">dołącz do zespołu</button>.';return}
     ls.set('ek-me',p.id);toast('Cześć, '+shortName(p)+'!');if(ui.screen==='home')go('#/me');else render()}
+  else if(f.id==='joinForm'){e.preventDefault();const name=f.name.value.trim().replace(/\s+/g,' '),err=m=>{$('#joinErr').textContent=m};
+    if(name.split(' ').length<2)return err('Wpisz imię i nazwisko.');
+    if(state.people.some(p=>norm(p.name)===norm(name)))return err('Osoba o takim imieniu już jest w zespole. Jeśli to Ty, wróć i wpisz swoje imię na stronie głównej.');
+    const p={id:uid(),name,nick:f.nick.value.trim(),contact:f.contact.value.trim(),func:'',role:'member',pinHash:'',photo:joinPhoto,color:f.querySelector('[name=color]:checked')?.value||nextColor(),pending:true,joinedAt:Date.now()};
+    if(await put('people',p)){joinPhoto='';ui.prefill='';ls.set('ek-me',p.id);toast('Zgłoszenie wysłane');go('#/me/profil')}}
   else if(f.id==='profileForm'){e.preventDefault();const p=member();if(!p)return;
     const upd={...p,nick:f.nick.value.trim(),color:f.querySelector('[name=color]:checked')?.value||colorOf(p)};
     if(profPhoto!==undefined)upd.photo=profPhoto;
@@ -909,7 +1004,7 @@ document.addEventListener('click',async e=>{
   if(el=g('[data-notme]')){ls.set('ek-me',null);profPhoto=undefined;if(ui.screen==='me')go('#/');else render();return}
   if(el=g('#profPhotoClear')){profPhoto='';$('#profPrev').innerHTML=esc(initials(member()?.name));return}
   if(el=g('[data-new]')){const k=el.dataset.new;if(!me())return;
-    if(k==='task')openTask(null,{date:el.dataset.date||''});else if(k==='event')openEvent(null,{date:el.dataset.date||''});else openPerson();return}
+    if(k==='task')openTask(null,{date:el.dataset.date||'',eventId:el.dataset.ev||''});else if(k==='event')openEvent(null,{date:el.dataset.date||''});else openPerson();return}
   if(el=g('[data-edit]')){const t=state.tasks.find(x=>x.id===el.dataset.edit);if(t&&me())openTask(t);return}
   if(el=g('[data-edit-event]')){const ev=eventOf(el.dataset.editEvent);if(ev&&me())openEvent(ev);return}
   if(el=g('[data-edit-person]')){const p=person(el.dataset.editPerson);if(p&&me()){if(!isAdmin()&&p.role!=='member')return toast('Tylko administrator może edytować organizatorów.');openPerson(p)}return}
@@ -917,12 +1012,15 @@ document.addEventListener('click',async e=>{
   if(el=g('[data-copy]')){const url=eventUrl(el.dataset.copy);
     try{await navigator.clipboard.writeText(url);toast('Skopiowano link do wydarzenia')}catch(err){prompt('Skopiuj link:',url)}return}
   if(el=g('[data-ics]')){const[k,id]=el.dataset.ics.split(':'),p=member();
-    const tItem=t=>{const ev=eventOf(t.eventId);return {uid:'task-'+t.id,title:(isShared(t)?'👥 ':'')+'Zadanie: '+t.title+(ev?' ('+ev.name+')':''),date:t.date,time:t.time,place:ev?.place,desc:[t.notes,isShared(t)?'Wspólne: '+whoLabel(t):''].filter(Boolean).join('\n'),url:ev?eventUrl(ev.id):location.href.split('#')[0]+'#/me'}};
+    const tItem=t=>{const ev=eventOf(t.eventId);return {uid:'task-'+t.id,title:(isShared(t)?'👥 ':'')+'Zadanie: '+t.title+(ev?' ('+ev.name+')':''),date:t.date,endDate:isMulti(t)?tEnd(t):'',time:t.time,place:ev?.place,desc:[t.notes,isShared(t)?'Wspólne: '+whoLabel(t):''].filter(Boolean).join('\n'),url:ev?eventUrl(ev.id):location.href.split('#')[0]+'#/me'}};
     if(k==='event'){const ev=eventOf(id);if(ev)downloadICS(ev.name,[evItem(ev)])}
     else if(k==='all'){const t0=today();downloadICS(ORG+' wydarzenia',state.events.filter(e=>e.date&&e.date>=t0&&(ui.fType==='all'||typeOf(e)===ui.fType)).map(evItem))}
     else if(k==='mine'&&p){const ev=eventOf(id);downloadICS('Moje zadania '+(ev?ev.name:''),tasksForEvent(id).filter(t=>isMine(t,p.id)&&t.date&&!t.done).map(tItem))}
     else if(k==='mineall'&&p)downloadICS('Moje zadania '+ORG,state.tasks.filter(t=>isMine(t,p.id)&&t.date&&!t.done).map(tItem));
     return}
+  if(el=g('[data-accept]')){const p=person(el.dataset.accept);if(p&&me()&&await put('people',{...p,pending:false}))toast('Dodano '+shortName(p)+' do zespołu');return}
+  if(el=g('[data-reject]')){const p=person(el.dataset.reject);if(p&&me()&&confirm('Odrzucić zgłoszenie: '+p.name+'?')&&await del('people',p.id))toast('Odrzucono zgłoszenie');return}
+  if(el=g('[data-copy-join]')){const url=location.href.split('#')[0]+'#/dolacz';try{await navigator.clipboard.writeText(url);toast('Skopiowano link zaproszenia')}catch(err){prompt('Skopiuj link:',url)}return}
   if(el=g('[data-ftype]')){ui.fType=el.dataset.ftype;render();return}
   if(el=g('[data-pview]')){ui.pview=el.dataset.pview;render();return}
   if(el=g('[data-day]')){ui.cursor=parse(el.dataset.day);ui.pview='day';render();return}
@@ -936,6 +1034,7 @@ document.addEventListener('change',async e=>{
   else if(t.id==='fPerson'){ui.fPerson=t.value;render()}
   else if(t.id==='fCal'){ui.fCal=t.value;render()}
   else if(t.id==='showDone'){ui.showDone=t.checked;render()}
+  else if(t.id==='joinPhoto'){const file=t.files[0];if(file)readPhoto(file,src=>{joinPhoto=src;$('#joinPrev').innerHTML=`<img src="${src}" alt="">`});t.value=''}
   else if(t.id==='profPhoto'){const file=t.files[0];if(file)readPhoto(file,src=>{profPhoto=src;$('#profPrev').innerHTML=`<img src="${src}" alt="">`});t.value=''}
   else if(t.name==='color'&&t.closest('#profileForm')){$('.profhead')?.style.setProperty('--pc',t.value)}
   else if(t.dataset.toggle){const task=state.tasks.find(x=>x.id===t.dataset.toggle);if(!task)return;
