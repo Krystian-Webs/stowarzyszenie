@@ -678,9 +678,10 @@ function whoBadges(t,pid){
 }
 function myTaskRow(t,pid,showEvent){
   const c=isShared(t)?'var(--shared)':colorOf(person(pid));
+  const from=t.createdBy&&t.createdBy!==pid&&person(t.createdBy)?`<span>od ${esc(shortName(person(t.createdBy)))}</span>`:'';
   const by=t.done&&t.doneBy&&t.doneBy!==pid&&person(t.doneBy)?` · odhaczył(a) ${esc(shortName(person(t.doneBy)))}`:'';
   return `<label class="mytask ${t.done?'done':''}" style="--pc:${c}"><input type="checkbox" data-toggle="${t.id}" ${t.done?'checked':''}><div><b>${esc(t.title)}</b>
-   <span class="mt-meta">${whoBadges(t,pid)}${showEvent?`<span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>`:''}${dueHtml(t)}${by}</span>${t.notes?`<span class="notes">${esc(t.notes)}</span>`:''}</div></label>`;
+   <span class="mt-meta">${whoBadges(t,pid)}${showEvent?`<span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>`:''}${dueHtml(t)}${from}${by}</span>${t.notes?`<span class="notes">${esc(t.notes)}</span>`:''}</div></label>`;
 }
 function vEvent(){
   const id=ui.eventId,e=eventOf(id);
@@ -701,7 +702,7 @@ function vEvent(){
     h+=`<div class="mehead">${avatar(p,48)}<div style="flex:1;min-width:180px"><b style="font-size:18px">Twoje zadania</b>
       ${mine.length?`<div class="prog" style="max-width:280px"><i style="width:${Math.round(done/mine.length*100)}%;background:${colorOf(p)}"></i></div><span style="color:var(--muted);font-size:14px">${done} z ${mine.length} zrobione</span>`:''}</div>
       ${mine.length?`<button class="btn sm primary" data-new="task" data-ev="${id}">+ Dodaj zadanie</button>`:''}<button class="btn sm" data-go="me">Moje konto</button><button class="btn sm" data-notme>To nie ja</button></div>`;
-    if(!mine.length)h+=`<div class="empty"><h3>Nie masz zadań przy tym wydarzeniu</h3><p>${me()?'Dodaj zadanie i przypisz je sobie albo komuś z zespołu.':'Dodaj zadanie, które bierzesz na siebie, albo poczekaj, aż koordynator coś Ci przypisze.'}</p><button class="btn primary" data-new="task" data-ev="${id}">Dodaj zadanie</button></div>`;
+    if(!mine.length)h+=`<div class="empty"><h3>Nie masz zadań przy tym wydarzeniu</h3><p>${me()?'Dodaj zadanie i przypisz je sobie albo komuś z zespołu.':'Dodaj zadanie dla siebie albo kogoś z zespołu.'}</p><button class="btn primary" data-new="task" data-ev="${id}">Dodaj zadanie</button></div>`;
     else{
       if(mine.some(t=>t.date&&!t.done))h+=`<div class="calrow" style="margin:0 0 14px"><span>Terminy tych zadań:</span><button class="btn sm" data-ics="mine:${id}">Dodaj do kalendarza</button></div>`;
       if(done===mine.length)h+=`<div class="banner" style="background:var(--moss-bg);color:var(--moss-ink)">Wszystko zrobione. Dziękujemy!</div>`;
@@ -897,23 +898,23 @@ let editTask=null,editEvent=null,editPerson=null,photoData='',profPhoto=undefine
 let selfMode=null;
 function openTask(t,preset={}){
   editTask=t||null;const f=$('#taskForm');selfMode=!me()&&preset.self?person(preset.self):null;
-  $('#taskDlgTitle').textContent=t?'Edytuj zadanie':selfMode?'Nowe zadanie dla Ciebie':'Nowe zadanie';
-  const d=t||{title:'',eventId:preset.eventId||(ui.fEvent!=='all'&&ui.fEvent!=='_general'?ui.fEvent:''),personIds:ui.fPerson!=='all'&&ui.fPerson!=='none'?[ui.fPerson]:[],date:preset.date||'',time:'',notes:'',done:false,all:false};
+  $('#taskDlgTitle').textContent=t?'Edytuj zadanie':'Nowe zadanie';
+  const d=t||{title:'',eventId:preset.eventId||(ui.fEvent!=='all'&&ui.fEvent!=='_general'?ui.fEvent:''),personIds:selfMode?[selfMode.id]:ui.fPerson!=='all'&&ui.fPerson!=='none'?[ui.fPerson]:[],date:preset.date||'',time:'',notes:'',done:false,all:false};
   f.event.innerHTML=evOptions(eventOf(d.eventId)?d.eventId:'_general');
   const ids=assignees(d);
   $('#assignBox').innerHTML=`<label class="asg team"><input type="checkbox" name="all" ${d.all?'checked':''}><span class="av" style="width:28px;height:28px;background:var(--shared);color:var(--paper);font-size:14px">👥</span><span>Cały zespół <small>(wspólne)</small></span></label>`+
     active().map(p=>`<label class="asg"><input type="checkbox" name="pid" value="${p.id}" ${ids.includes(p.id)?'checked':''}><span class="avwrap" style="--pc:${colorOf(p)}">${avatar(p,28)}</span><span>${esc(dispName(p))}</span></label>`).join('')+
     (active().length?'':`<p class="hint">Najpierw dodaj osoby w zakładce Zespół.</p>`);
-  if(selfMode)$('#assignBox').innerHTML=`<label class="asg"><input type="checkbox" checked disabled><span class="avwrap" style="--pc:${colorOf(selfMode)}">${avatar(selfMode,28)}</span><span>${esc(dispName(selfMode))}</span></label>`;
   syncAssign();
   f.title.value=d.title;f.date.value=d.date||'';f.endDate.value=d.endDate&&d.endDate>d.date?d.endDate:'';f.time.value=d.time||'';f.notes.value=d.notes||'';f.done.checked=!!d.done;
   $('#taskDel').style.display=t?'':'none';$('#taskErr').textContent='';$('#taskDlg').showModal();f.title.focus();
 }
-function syncAssign(){if(selfMode){$('#assignHint').textContent='Zadanie zostanie przypisane do Ciebie. Organizator zobaczy je w panelu.';return}
+function syncAssign(){
   const all=$('#taskForm').querySelector('[name=all]');if(!all)return;
   $('#taskForm').querySelectorAll('[name=pid]').forEach(x=>{x.disabled=all.checked;x.closest('label').classList.toggle('off',all.checked)});
   const n=[...$('#taskForm').querySelectorAll('[name=pid]:checked')].length;
-  $('#assignHint').textContent=all.checked?'Zadanie wspólne dla wszystkich. Wystarczy, że jedna osoba je odhaczy.':n>1?'Zadanie wspólne dla zaznaczonych osób.':n===1?'Zadanie jednej osoby.':'Nikt nie jest przypisany.'}
+  $('#assignHint').textContent=all.checked?'Zadanie wspólne dla wszystkich. Wystarczy, że jedna osoba je odhaczy.':n>1?'Zadanie wspólne dla zaznaczonych osób.':n===1?'Zadanie jednej osoby.':'Nikt nie jest przypisany.';
+  if(selfMode)$('#assignHint').textContent+=' Osoby zobaczą, że zadanie jest od Ciebie.'}
 $('#taskForm').addEventListener('change',e=>{if(e.target.name==='all'||e.target.name==='pid')syncAssign()});
 $('#taskForm').title.addEventListener('input',()=>$('#taskErr').textContent='');
 $('#taskForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,title=f.title.value.trim();
@@ -922,7 +923,7 @@ $('#taskForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.
   if(ed&&!sd){sd=ed;ed=''}
   if(ed&&ed<sd){$('#taskErr').textContent='Data „do” nie może być wcześniejsza niż „od”.';f.endDate.focus();return}
   if(ed===sd)ed='';
-  const all=selfMode?false:f.querySelector('[name=all]').checked,ids=selfMode?[selfMode.id]:all?[]:[...f.querySelectorAll('[name=pid]:checked')].map(x=>x.value);
+  const all=f.querySelector('[name=all]').checked,ids=all?[]:[...f.querySelectorAll('[name=pid]:checked')].map(x=>x.value);
   const done=f.done.checked;
   const t={id:editTask?editTask.id:uid(),title,eventId:f.event.value==='_general'?'':f.event.value,personIds:ids,all,date:sd,endDate:ed,time:ed?'':f.time.value,notes:f.notes.value.trim(),done,doneBy:done?(editTask?.done?editTask.doneBy||'':me()?.id||''):'',created:editTask?.created||Date.now(),createdBy:editTask?.createdBy||me()?.id||selfMode?.id||''};
   if(await put('tasks',t)){$('#taskDlg').close();toast(editTask?'Zapisano zmiany':'Dodano zadanie')}});
