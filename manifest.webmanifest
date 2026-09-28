@@ -1,0 +1,15 @@
+{
+  "name": "Event Kraft",
+  "short_name": "Event Kraft",
+  "description": "Zadania, wydarzenia i kalendarz stowarzyszenia Event Kraft",
+  "lang": "pl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F5F6F3",
+  "theme_color": "#F2C230",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
