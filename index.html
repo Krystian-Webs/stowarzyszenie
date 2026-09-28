@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Planer stowarzyszenia</title>
+<title>Event Kraft</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
@@ -180,51 +181,178 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;display:none;z-index:10;max-width:calc(100vw - 32px)}
 .note{font-size:13px;color:var(--muted);margin-top:30px}
 @media (max-width:640px){.top{grid-template-columns:1fr}.bib{min-width:0}}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.logo{font-stretch:125%;font-weight:800;font-size:clamp(26px,4vw,36px);letter-spacing:-.02em;line-height:1;margin:0;background:none;border:0;padding:0;text-align:left}
+.logo span{display:inline-block;background:var(--bib);color:#1B1600;padding:2px 8px 4px;border-radius:6px;margin-left:6px}
+.topbar .who{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.banner{background:var(--bib-bg);color:var(--bib-ink);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:18px}
+.evgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.evcard{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left;width:100%}
+.evcard:hover{border-color:var(--muted)}
+.evdate{background:var(--bib);color:#1B1600;border-radius:8px;width:62px;text-align:center;padding:6px 0 7px;line-height:1.05}
+.evdate b{display:block;font-size:26px;font-stretch:125%;font-weight:800}
+.evdate small{font-size:12px;font-weight:700;text-transform:uppercase}
+.evdate.gen{background:var(--moss-bg);color:var(--moss-ink);font-size:22px;font-weight:800;padding:14px 0}
+.evcard h3{margin:0 0 2px;font-size:18px;font-weight:700;line-height:1.25}
+.evcard p{margin:0;color:var(--muted);font-size:14px}
+.sect{font-size:15px;font-weight:700;color:var(--muted);margin:28px 0 10px}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px}
+.hero h2{margin:0 0 4px;font-size:clamp(22px,3.4vw,30px);font-stretch:115%;font-weight:800;line-height:1.15}
+.hero .meta{color:var(--muted);font-size:15px}
+.hero .desc{margin:12px 0 0;white-space:pre-wrap}
+.namebox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:560px}
+.namebox h3{margin:0 0 4px;font-size:20px}
+.namebox p{margin:0 0 14px;color:var(--muted)}
+.inrow{display:flex;gap:8px;flex-wrap:wrap}
+.inrow .in{flex:1;min-width:200px;font-size:16px;padding:10px 12px}
+.inrow .btn{padding:10px 16px;font-size:15px}
+.prog{height:8px;background:var(--gray-bg);border-radius:4px;overflow:hidden;margin:8px 0 4px}
+.prog i{display:block;height:100%;background:var(--moss);border-radius:4px}
+.mytask{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer}
+.mytask input{width:24px;height:24px;accent-color:var(--moss);flex:none;margin:0}
+.mytask b{display:block;font-size:17px}
+.mytask span{display:block;color:var(--muted);font-size:14px;white-space:pre-wrap}
+.mytask.done{background:var(--paper)}
+.mytask.done b{text-decoration:line-through;color:var(--muted)}
+.role{font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.role-admin{background:var(--ink);color:var(--paper)}
+.role-editor{background:var(--bib-bg);color:var(--bib-ink)}
+.role-member{background:var(--gray-bg);color:var(--gray-ink)}
+.roles-help{font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.roles-help b{color:var(--ink)}
+.center{max-width:440px;margin:30px auto}
+.linklike{background:none;border:0;padding:0;color:var(--moss);font-weight:600;text-decoration:underline;font-size:inherit}
+.evrow{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;flex-wrap:wrap}
+.evrow .grow{flex:1;min-width:180px}
+.evrow h3{margin:0;font-size:17px}
+.evrow p{margin:0;color:var(--muted);font-size:14px}
+.evrow .prog{width:140px}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+
+:root{--ts:#F2C230;--ts-ink:#1B1600;--tm:#6D4BC4;--tm-ink:#fff;--tk:#D1495B;--tk-ink:#fff;--tp:#2F6B4F;--tp-ink:#fff;--ti:#5A6572;--ti-ink:#fff;
+ --ts-bg:#FBF0C9;--ts-fg:#5C4500;--tm-bg:#ECE6FA;--tm-fg:#45288F;--tk-bg:#FBE4E7;--tk-fg:#8E1F2E;--tp-bg:#E1EEE6;--tp-fg:#1F4A36;--ti-bg:#E9ECE8;--ti-fg:#3E4650}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--tm:#9C80F0;--tm-ink:#140A33;--tk:#F07A8A;--tk-ink:#33070E;--tp:#62B38D;--tp-ink:#0D1A13;--ti:#9AA5B0;--ti-ink:#10151B;
+ --ts-bg:#3A3014;--ts-fg:#F7DD85;--tm-bg:#2A2147;--tm-fg:#CDBDFA;--tk-bg:#3F1C22;--tk-fg:#F8B4BE;--tp-bg:#1C3328;--tp-fg:#A9DCC3;--ti-bg:#252E38;--ti-fg:#C6CDD4}}
+.t-sport{--c:var(--ts);--ci:var(--ts-ink);--cb:var(--ts-bg);--cf:var(--ts-fg)}
+.t-muzyka{--c:var(--tm);--ci:var(--tm-ink);--cb:var(--tm-bg);--cf:var(--tm-fg)}
+.t-kultura{--c:var(--tk);--ci:var(--tk-ink);--cb:var(--tk-bg);--cf:var(--tk-fg)}
+.t-spotkanie{--c:var(--tp);--ci:var(--tp-ink);--cb:var(--tp-bg);--cf:var(--tp-fg)}
+.t-inne{--c:var(--ti);--ci:var(--ti-ink);--cb:var(--ti-bg);--cf:var(--ti-fg)}
+.evdate[class*="t-"]{background:var(--c);color:var(--ci)}
+.ttag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--cb);color:var(--cf);white-space:nowrap}
+.tline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.soon{font-size:12px;font-weight:700;color:var(--muted)}
+.next{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;width:100%;text-align:left;background:var(--surface);border:2px solid var(--c);border-radius:14px;padding:18px 20px;margin-bottom:6px}
+.next .nd{background:var(--c);color:var(--ci);border-radius:10px;width:96px;text-align:center;padding:10px 0 12px;line-height:1}
+.next .nd b{display:block;font-size:44px;font-stretch:125%;font-weight:800}
+.next .nd small{font-size:13px;font-weight:700}
+.next h3{margin:2px 0 4px;font-size:clamp(20px,3vw,26px);font-stretch:112%;font-weight:800;line-height:1.15}
+.next p{margin:0;color:var(--muted);font-size:14px}
+.next .soon{font-size:14px;color:var(--ink)}
+.evgrid.past .evcard{opacity:.7}
+.wrap-seg{flex-wrap:wrap}
+.chip.ev-chip{background:var(--c);color:var(--ci)}
+.item.ev-item{background:var(--cb);border-color:var(--c);color:var(--cf)}
+.item.ev-item .tt span{color:var(--cf)}
+.ygrid button.race{background:var(--c);color:var(--ci)}
+.dot[class*="t-"]{background:var(--c)}
+@media (max-width:520px){.next{grid-template-columns:1fr;gap:12px}.next .nd{width:auto;display:flex;gap:10px;align-items:baseline;justify-content:center;padding:8px}.next .nd b{font-size:32px;display:inline}}
+
+.calrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--muted)}
+.calrow a.btn{text-decoration:none;color:var(--ink)}
+
+:root{--shared:#1F2937}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--shared:#CBD5E1}}
+.acct{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 4px}
+.hello{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.hello:hover{border-color:var(--muted)}
+.hello div{flex:1}.hello b{display:block;font-size:20px;font-stretch:112%;font-weight:800}.hello span{color:var(--muted);font-size:14px}
+.pdot{width:14px;height:14px;border-radius:50%;flex:none}
+.mine-cnt{color:var(--ink)}
+.mehead{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.mytask{box-shadow:inset 5px 0 0 var(--pc,transparent);padding-left:20px}
+.mytask .mt-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:3px}
+.mytask .notes{margin-top:4px}
+.wtag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.wtag.shared{background:var(--shared);color:var(--paper)}
+.profhead{display:flex;gap:16px;align-items:center;margin-bottom:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--pc);border-radius:14px;padding:16px 18px}
+.profhead div{flex:1;min-width:180px}
+.profhead h2{margin:0;font-size:clamp(22px,3.4vw,28px);font-stretch:115%;font-weight:800;line-height:1.15}
+.profhead p{margin:2px 0 0;color:var(--muted)}
+.profhead .av{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--pc)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.sw{position:relative;cursor:pointer}
+.sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sw span{display:block;width:32px;height:32px;border-radius:50%;background:var(--c);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.sw input:checked+span{box-shadow:0 0 0 3px var(--ink)}
+.sw input:focus-visible+span{outline:2px solid var(--moss);outline-offset:3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.legend i.evl{background:var(--bib-bg);box-shadow:inset 3px 0 0 var(--bib)}
+.chip.task{background:var(--pc);color:#fff}
+.chip.task[style*="--shared"]{color:var(--paper)}
+.chip.ev-chip{background:var(--cb);color:var(--cf);box-shadow:inset 3px 0 0 var(--c)}
+.item.task-item{box-shadow:inset 5px 0 0 var(--pc);padding-left:16px}
+.avwrap{display:inline-flex;border-radius:50%;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--pc)}
+.pcard{border-top:5px solid var(--pc,var(--line))}
+.pcard.add{border-top-width:1px}
+.assign{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:8px;padding:6px;max-height:220px;overflow:auto;background:var(--paper)}
+.asg{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:6px;font-weight:500;cursor:pointer}
+.asg:hover{background:var(--hover)}
+.asg input{width:18px;height:18px;accent-color:var(--moss);margin:0}
+.asg.team{border-bottom:1px solid var(--line);border-radius:6px 6px 0 0;margin-bottom:4px;padding-bottom:8px}
+.asg small{color:var(--muted);font-weight:400}
+.asg.off{opacity:.45}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div class="org">
-      <h1 id="orgName">Stowarzyszenie</h1>
-      <p id="orgSub">Zadania, terminy i planer zespołu w jednym miejscu</p>
-      <div class="acts">
-        <button class="btn primary" data-new="task">Dodaj zadanie</button>
-        <button class="btn" data-new="event">Dodaj wydarzenie</button>
-        <button class="btn" id="settingsBtn">Ustawienia</button>
-      </div>
-    </div>
-    <div class="bib" id="bib"></div>
+  <header class="topbar">
+    <button class="logo" data-go="home" aria-label="Strona główna">Event <span>Kraft</span></button>
+    <div class="who" id="who"></div>
   </header>
-
-  <nav class="tabs" role="tablist" aria-label="Widoki">
-    <button role="tab" data-tab="zadania">Zadania</button>
-    <button role="tab" data-tab="terminarz">Terminarz</button>
-    <button role="tab" data-tab="planer">Planer</button>
-    <button role="tab" data-tab="zespol">Zespół</button>
-  </nav>
-
-  <main id="view" aria-live="polite"></main>
-  <p class="note" id="modeNote"></p>
+  <div id="modeBanner"></div>
+  <main id="view" aria-live="polite"><div class="loading">Ładowanie…</div></main>
 </div>
 
 <dialog id="taskDlg">
   <form id="taskForm" novalidate>
     <h2 id="taskDlgTitle">Nowe zadanie</h2>
-    <div class="fld"><span>Co jest do zrobienia</span><input class="in" name="title" maxlength="140" placeholder="Zamówić medale na bieg"><span class="err" id="taskErr"></span></div>
-    <div class="two">
-      <label class="fld">Rodzaj<select class="in" name="kind"><option value="task">Zadanie</option><option value="event">Wydarzenie</option></select></label>
-      <label class="fld">Kategoria<select class="in" name="cat"><option value="stow">Stowarzyszenie</option><option value="fort">Fort Run</option><option value="inne">Inne</option></select></label>
+    <label class="fld">Co jest do zrobienia<input class="in" name="title" maxlength="140" placeholder="Zamówić medale na bieg"><span class="err" id="taskErr"></span></label>
+    <div>
+      <label class="fld">Wydarzenie<select class="in" name="event"></select></label>
     </div>
-    <label class="fld">Kto się tym zajmuje<select class="in" name="person"></select></label>
+    <div class="fld"><span>Kto to robi</span><div class="assign" id="assignBox"></div><span class="hint" id="assignHint"></span></div>
     <div class="two">
-      <label class="fld">Data<input class="in" type="date" name="date"></label>
+      <label class="fld">Termin<input class="in" type="date" name="date"></label>
       <label class="fld">Godzina<input class="in" type="time" name="time"></label>
     </div>
-    <label class="fld">Opis<textarea class="in" name="notes" rows="3" placeholder="Szczegóły, linki, ustalenia"></textarea></label>
-    <label class="chk" id="doneWrap"><input type="checkbox" name="done"> Zrobione</label>
+    <label class="fld">Opis<textarea class="in" name="notes" rows="3" placeholder="Szczegóły, ustalenia, kontakty"></textarea></label>
+    <label class="chk"><input type="checkbox" name="done"> Zrobione</label>
     <div class="dacts">
       <button type="button" class="btn danger left" id="taskDel">Usuń</button>
+      <button type="button" class="btn" data-close>Anuluj</button>
+      <button type="submit" class="btn primary">Zapisz</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="eventDlg">
+  <form id="eventForm" novalidate>
+    <h2 id="eventDlgTitle">Nowe wydarzenie</h2>
+    <label class="fld">Rodzaj wydarzenia<select class="in" name="type">
+      <option value="sport">🏃 Sportowe</option><option value="muzyka">🎵 Muzyczne</option><option value="kultura">🎭 Kulturalne</option><option value="spotkanie">🤝 Spotkanie</option><option value="inne">📌 Inne</option>
+    </select></label>
+    <label class="fld">Nazwa<input class="in" name="name" maxlength="80" placeholder="Fort Run 2026"><span class="err" id="eventErr"></span></label>
+    <div class="two">
+      <label class="fld">Data<input class="in" type="date" name="date"></label>
+      <div class="two"><label class="fld">Od<input class="in" type="time" name="time"></label><label class="fld">Do<input class="in" type="time" name="endTime"></label></div>
+    </div>
+    <label class="fld">Miejsce<input class="in" name="place" maxlength="100" placeholder="Fort Bema, Warszawa"></label>
+    <label class="fld">Opis dla uczestników<textarea class="in" name="desc" rows="3" placeholder="Zbiórka, co zabrać, kontakt do koordynatora"></textarea></label>
+    <div class="dacts">
+      <button type="button" class="btn danger left" id="eventDel">Usuń</button>
       <button type="button" class="btn" data-close>Anuluj</button>
       <button type="submit" class="btn primary">Zapisz</button>
     </div>
@@ -241,8 +369,18 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
         <button type="button" class="btn sm" id="photoClear">Usuń zdjęcie</button>
       </div>
     </div>
-    <label class="fld">Imię i nazwisko<input class="in" name="name" maxlength="60" placeholder="Anna Kowalska"><span class="err" id="personErr"></span></label>
-    <label class="fld">Funkcja<input class="in" name="role" maxlength="60" placeholder="Skarbniczka"></label>
+    <label class="fld">Imię i nazwisko<input class="in" name="name" maxlength="60" placeholder="Anna Kowalska"><span class="hint">Tak, jak osoba będzie je wpisywać na stronie wydarzenia.</span><span class="err" id="personErr"></span></label>
+    <label class="fld">Pseudonim<input class="in" name="nick" maxlength="30" placeholder="Ania"></label>
+    <div class="fld"><span>Kolor w kalendarzu</span><div id="personColors"></div></div>
+    <label class="fld">Funkcja w stowarzyszeniu<input class="in" name="func" maxlength="60" placeholder="Skarbniczka"></label>
+    <div id="roleFields">
+      <label class="fld">Uprawnienia<select class="in" name="role">
+        <option value="member">Członek – odhacza swoje zadania</option>
+        <option value="editor">Edytor – zarządza zadaniami i wydarzeniami</option>
+        <option value="admin">Administrator – pełny dostęp i nadawanie ról</option>
+      </select></label>
+      <label class="fld" id="pinFld">PIN do logowania<input class="in" name="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password" placeholder="min. 4 cyfry"><span class="hint" id="pinHint"></span></label>
+    </div>
     <div class="dacts">
       <button type="button" class="btn danger left" id="personDel">Usuń osobę</button>
       <button type="button" class="btn" data-close>Anuluj</button>
@@ -251,28 +389,45 @@ dialog h2{margin:0 0 16px;font-size:20px;font-stretch:112%;font-weight:750}
   </form>
 </dialog>
 
-<dialog id="setDlg">
-  <form id="setForm" novalidate>
-    <h2>Ustawienia</h2>
-    <label class="fld">Nazwa stowarzyszenia<input class="in" name="name" maxlength="80"></label>
-    <div class="two">
-      <label class="fld">Nazwa biegu<input class="in" name="eventName" maxlength="40"></label>
-      <label class="fld">Data biegu<input class="in" type="date" name="eventDate"></label>
-    </div>
-    <div class="dacts">
-      <button type="button" class="btn" data-close>Anuluj</button>
-      <button type="submit" class="btn primary">Zapisz</button>
-    </div>
-  </form>
-</dialog>
-
+<datalist id="peopleList"></datalist>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-const CATS={stow:'Stowarzyszenie',fort:'Fort Run',inne:'Inne'};
-const state={people:[],tasks:[],settings:{name:'Nasze stowarzyszenie',eventName:'Fort Run',eventDate:''}};
-const ui={tab:'zadania',cat:'all',person:'all',showDone:false,pview:'week',cursor:new Date(),readOnly:false};
-let db=null;
+/* =====================================================================
+   EVENT KRAFT – planer stowarzyszenia
+
+   WSPÓLNA BAZA DANYCH (Firebase):
+   Bez niej dane zapisują się tylko w przeglądarce na jednym urządzeniu.
+   Żeby wszyscy widzieli te same zadania, wklej poniżej konfigurację
+   z Firebase (console.firebase.google.com → Ustawienia projektu →
+   Twoje aplikacje → Konfiguracja SDK), zamiast null:
+
+   const FIREBASE_CONFIG = {
+     apiKey: "...",
+     authDomain: "...",
+     projectId: "...",
+     storageBucket: "...",
+     messagingSenderId: "...",
+     appId: "..."
+   };
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyClTPdn54xuh3aLrhvJiJUXcCRr1LM29II",
+  authDomain: "event-kraft.firebaseapp.com",
+  projectId: "event-kraft",
+  storageBucket: "event-kraft.firebasestorage.app",
+  messagingSenderId: "793899620618",
+  appId: "1:793899620618:web:08d7d48a6fb101b5a5c2f3"
+};
+
+const ORG='Event Kraft';
+const ROLES={member:'Członek',editor:'Edytor',admin:'Administrator'};
+const TYPES={sport:{l:'Sportowe',i:'🏃'},muzyka:{l:'Muzyczne',i:'🎵'},kultura:{l:'Kulturalne',i:'🎭'},spotkanie:{l:'Spotkanie',i:'🤝'},inne:{l:'Inne',i:'📌'}};
+const typeOf=e=>TYPES[e&&e.type]?e.type:'inne';
+const typeTag=e=>`<span class="ttag t-${typeOf(e)}">${TYPES[typeOf(e)].i} ${TYPES[typeOf(e)].l}</span>`;
+const state={people:[],tasks:[],events:[]};
+const ui={meTab:'zadania',fCal:'all',fType:'all',screen:'home',eventId:null,tab:'zadania',fEvent:'all',fPerson:'all',showDone:false,pview:'month',cursor:new Date(),loginErr:''};
+let fs=null,loaded=false;
 
 const pad=n=>String(n).padStart(2,'0');
 const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -286,234 +441,509 @@ const daysBetween=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
 const WD=['pon','wt','śr','czw','pt','sob','nd'];
 const uid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)).replace(/[^a-zA-Z0-9-]/g,'');
 const $=s=>document.querySelector(s);
+const norm=s=>String(s||'').toLowerCase().replace(/ł/g,'l').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
 
-function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3200)}
-function person(id){return state.people.find(p=>p.id===id)}
-function initials(n){return (n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')}
-function avatar(p,size){const s=size||36;const inner=p&&p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(p?initials(p.name):'?');return `<span class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.38)}px">${inner}</span>`}
-function sortByDate(a,b){return (a.date||'9999').localeCompare(b.date||'9999')||(a.time||'99').localeCompare(b.time||'99')}
-function itemsOn(d){
-  const list=state.tasks.filter(t=>t.date===d).sort(sortByDate);
-  if(state.settings.eventDate===d)list.unshift({id:'__race',special:true,title:state.settings.eventName||'Fort Run',cat:'fort'});
-  return list;
+async function hash(pin){
+  const txt='ek-salt:'+pin;
+  if(crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=0;for(const c of txt)h=(h*31+c.charCodeAt(0))|0;return 'x'+h;
 }
+function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3200)}
+const person=id=>state.people.find(p=>p.id===id);
+const eventOf=id=>state.events.find(e=>e.id===id);
+const evName=id=>{const e=eventOf(id);return e?e.name:'Stowarzyszenie (ogólne)'};
+const initials=n=>(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+function avatar(p,s=36){const inner=p&&p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(p?initials(p.name):'?');return `<span class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.38)}px">${inner}</span>`}
+const sortByDate=(a,b)=>(a.date||'9999').localeCompare(b.date||'9999')||(a.time||'99').localeCompare(b.time||'99');
+const PALETTE=['#2563EB','#DB2777','#EA580C','#7C3AED','#16A34A','#DC2626','#0891B2','#4F46E5','#92400E','#4D7C0F','#A21CAF','#475569'];
+const colorOf=p=>p&&PALETTE.includes(p.color)?p.color:(p?PALETTE[Math.abs([...p.id].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7))%PALETTE.length]:'#475569');
+function nextColor(){const used=state.people.map(p=>p.color);return PALETTE.find(c=>!used.includes(c))||PALETTE[state.people.length%PALETTE.length]}
+const assignees=t=>(t.personIds||(t.personId?[t.personId]:[])).filter(id=>person(id));
+const isShared=t=>!!t.all||assignees(t).length>1;
+const isMine=(t,pid)=>!!t.all||assignees(t).includes(pid);
+const isUnassigned=t=>!t.all&&!assignees(t).length;
+const dispName=p=>p?(p.nick?`${p.name} „${p.nick}”`:p.name):'';
+const shortName=p=>p?(p.nick||p.name.split(' ')[0]):'';
+function whoLabel(t){if(t.all)return 'Cały zespół';const a=assignees(t).map(person);return a.length?a.map(shortName).join(', '):'Nieprzypisane'}
+function member(){return person(ls.get('ek-me'))||null}
+const tasksForEvent=id=>state.tasks.filter(t=>id==='_general'?!eventOf(t.eventId):t.eventId===id);
+function me(){const p=person(ls.get('ek-session'));return p&&(p.role==='editor'||p.role==='admin')?p:null}
+const isAdmin=()=>me()?.role==='admin';
+const hasAdmin=()=>state.people.some(p=>p.role==='admin');
 
 /* ---------- storage ---------- */
-function loadLocal(){try{const s=JSON.parse(localStorage.getItem('planer-stow-v1')||'null');if(s){state.people=s.people||[];state.tasks=s.tasks||[];Object.assign(state.settings,s.settings||{})}}catch(e){}}
-function saveLocal(){try{localStorage.setItem('planer-stow-v1',JSON.stringify(state))}catch(e){toast('Nie udało się zapisać w przeglądarce.')}}
-function upsert(arr,obj){const i=arr.findIndex(x=>x.id===obj.id);if(i>=0)arr[i]=obj;else arr.push(obj)}
-async function write(fn,localFn){
-  if(ui.readOnly){toast('Masz dostęp tylko do podglądu.');return false}
-  if(!db){localFn();saveLocal();render();return true}
-  try{await fn();return true}catch(e){
-    if(e&&e.code==='invalid_argument'){ui.readOnly=true;toast('Masz dostęp tylko do podglądu.');render()}
-    else if(e&&e.code==='quota_exceeded')toast('Limit danych został wyczerpany. Usuń stare zadania.');
-    else toast('Nie udało się zapisać. Spróbuj ponownie.');
-    return false}
+function loadLocal(){try{const s=JSON.parse(ls.get('eventkraft-v1')||'null');if(s){state.people=s.people||[];state.tasks=s.tasks||[];state.events=s.events||[]}}catch(e){}}
+function saveLocal(){ls.set('eventkraft-v1',JSON.stringify(state))}
+async function put(col,obj){
+  try{
+    if(fs){const{id,...r}=obj;await fs.collection(col).doc(id).set(r)}
+    else{const a=state[col],i=a.findIndex(x=>x.id===obj.id);if(i>=0)a[i]=obj;else a.push(obj);saveLocal();render()}
+    return true;
+  }catch(e){console.error(e);toast('Nie udało się zapisać. Sprawdź internet i spróbuj ponownie.');return false}
 }
-const saveTask=t=>write(()=>{const{id,...r}=t;return db.collection('tasks').doc(id).set(r)},()=>upsert(state.tasks,t));
-const deleteTask=id=>write(()=>db.collection('tasks').doc(id).delete(),()=>{state.tasks=state.tasks.filter(t=>t.id!==id)});
-const savePerson=p=>write(()=>{const{id,...r}=p;return db.collection('people').doc(id).set(r)},()=>upsert(state.people,p));
-const deletePerson=id=>write(()=>db.collection('people').doc(id).delete(),()=>{state.people=state.people.filter(p=>p.id!==id)});
-const saveSettings=s=>write(()=>db.doc('settings/main').set(s),()=>{Object.assign(state.settings,s)});
-
+async function del(col,id){
+  try{
+    if(fs)await fs.collection(col).doc(id).delete();
+    else{state[col]=state[col].filter(x=>x.id!==id);saveLocal();render()}
+    return true;
+  }catch(e){console.error(e);toast('Nie udało się usunąć. Spróbuj ponownie.');return false}
+}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 async function init(){
-  render();
-  if(window.claude&&window.claude.use){
-    try{db=await window.claude.use('db')}catch(e){db=null}
-  }
-  if(db){
-    $('#modeNote').textContent='Dane zapisują się online i widzi je każdy, komu udostępnisz tę stronę.';
-    const onErr=e=>{if(e&&e.code==='revoked'){ui.readOnly=true;render()}};
-    db.collection('tasks').onSnapshot(s=>{state.tasks=s.docs.map(d=>({id:d.id,...d.data()}));render()},onErr);
-    db.collection('people').onSnapshot(s=>{state.people=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||'').localeCompare(b.name||'','pl'));render()},onErr);
-    db.doc('settings/main').onSnapshot(s=>{if(s.exists)Object.assign(state.settings,s.data());render()},onErr);
+  if(FIREBASE_CONFIG){
+    try{
+      await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+      await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js');
+      firebase.initializeApp(FIREBASE_CONFIG);fs=firebase.firestore();
+      const got=new Set();
+      ['people','tasks','events'].forEach(c=>fs.collection(c).onSnapshot(s=>{
+        state[c]=s.docs.map(d=>({id:d.id,...d.data()}));
+        if(c==='people')state.people.sort((a,b)=>(a.name||'').localeCompare(b.name||'','pl'));
+        got.add(c);if(got.size===3)loaded=true;render();
+      },e=>{console.error(e);$('#modeBanner').innerHTML='<div class="banner">Brak dostępu do bazy danych. Sprawdź reguły Firestore w Firebase.</div>'}));
+      return;
+    }catch(e){console.error(e);fs=null;$('#modeBanner').innerHTML='<div class="banner">Nie udało się połączyć z bazą. Pracujesz w trybie lokalnym.</div>'}
   }else{
-    loadLocal();
-    $('#modeNote').textContent='Dane zapisują się w tej przeglądarce na tym urządzeniu.';
-    render();
+    $('#modeBanner').innerHTML='<div class="banner">Tryb próbny: dane zapisują się tylko w tej przeglądarce. Żeby wszyscy widzieli te same zadania, podłącz bazę Firebase (instrukcja na górze pliku).</div>';
   }
+  loadLocal();loaded=true;render();
 }
 
-/* ---------- rendering ---------- */
+/* ---------- routing ---------- */
+function readHash(){
+  const h=location.hash.replace(/^#\/?/,'').split('/');
+  if(h[0]==='e'&&h[1]){ui.screen='event';ui.eventId=h[1]}
+  else if(h[0]==='admin'){ui.screen='admin';if(h[1])ui.tab=h[1]}
+  else if(h[0]==='me'){ui.screen='me';if(h[1])ui.meTab=h[1]}
+  else if(h[0]==='login'){ui.screen='login'}
+  else ui.screen='home';
+}
+function go(hash){if(location.hash!==hash)location.hash=hash;else{readHash();render()}}
+window.addEventListener('hashchange',()=>{readHash();render();window.scrollTo(0,0)});
+
+/* ---------- kalendarz (.ics + Google) ---------- */
+const eventUrl=id=>location.href.split('#')[0]+'#/e/'+id;
+const compact=d=>d.replace(/-/g,'');
+const hhmm=t=>t.replace(':','')+'00';
+function endOf(date,time,endTime){
+  if(endTime&&endTime>time)return [date,endTime];
+  const d=parse(date),[h,m]=time.split(':').map(Number);d.setHours(h+2,m);
+  return [ymd(d),pad(d.getHours())+':'+pad(d.getMinutes())];
+}
+function icsEsc(s){return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+function fold(line){const out=[];let cur='';for(const ch of line){if(new TextEncoder().encode(cur+ch).length>73){out.push(cur);cur=' '+ch}else cur+=ch}out.push(cur);return out.join('\r\n')}
+function buildICS(items){
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Event Kraft//Planer//PL','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+ORG];
+  items.forEach(it=>{
+    L.push('BEGIN:VEVENT','UID:'+it.uid+'@eventkraft','DTSTAMP:'+stamp);
+    if(it.time){const[ed,et]=endOf(it.date,it.time,it.endTime);L.push('DTSTART:'+compact(it.date)+'T'+hhmm(it.time),'DTEND:'+compact(ed)+'T'+hhmm(et))}
+    else L.push('DTSTART;VALUE=DATE:'+compact(it.date),'DTEND;VALUE=DATE:'+compact(ymd(addDays(parse(it.date),1))));
+    L.push('SUMMARY:'+icsEsc(it.title));
+    if(it.place)L.push('LOCATION:'+icsEsc(it.place));
+    L.push('DESCRIPTION:'+icsEsc([it.desc,it.url?'Szczegóły i zadania: '+it.url:''].filter(Boolean).join('\n\n')));
+    if(it.url)L.push('URL:'+it.url);
+    L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(it.title),'TRIGGER:-P1D','END:VALARM','END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  return L.map(fold).join('\r\n')+'\r\n';
+}
+function evItem(e){return {uid:e.id,title:e.name,date:e.date,time:e.time,endTime:e.endTime,place:e.place,desc:e.desc,url:eventUrl(e.id)}}
+function downloadICS(name,items){
+  if(!items.length)return toast('Nie ma nic z datą do dodania.');
+  const blob=new Blob([buildICS(items)],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name.replace(/[^\p{L}\p{N}\- ]/gu,'').trim().replace(/\s+/g,'-')+'.ics';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+  toast('Otwórz pobrany plik, żeby dodać do kalendarza');
+}
+function gcalUrl(e){
+  let dates;
+  if(e.time){const[ed,et]=endOf(e.date,e.time,e.endTime);dates=compact(e.date)+'T'+hhmm(e.time)+'/'+compact(ed)+'T'+hhmm(et)}
+  else dates=compact(e.date)+'/'+compact(ymd(addDays(parse(e.date),1)));
+  const q=new URLSearchParams({action:'TEMPLATE',text:e.name,dates,ctz:'Europe/Warsaw',details:[e.desc,'Szczegóły i zadania: '+eventUrl(e.id)].filter(Boolean).join('\n\n'),location:e.place||''});
+  return 'https://calendar.google.com/calendar/render?'+q.toString();
+}
+function calButtons(e){
+  if(!e||!e.date)return '';
+  return `<div class="calrow"><span>Dodaj do kalendarza:</span><a class="btn sm" href="${esc(gcalUrl(e))}" target="_blank" rel="noopener">Google</a><button class="btn sm" data-ics="event:${e.id}">iPhone / Mac / Outlook</button></div>`;
+}
+
+/* ---------- render ---------- */
 function render(){
-  renderHeader();
-  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===ui.tab));
-  const v=$('#view');
-  v.innerHTML=({zadania:vTasks,terminarz:vAgenda,planer:vPlanner,zespol:vTeam})[ui.tab]();
+  const m=me(),mb=member();
+  let who='';
+  if(mb)who+=`<button class="btn sm acct" data-go="me">${avatar(mb,22)}<span>Moje konto</span></button>`;
+  if(m)who+=ui.screen==='admin'?`<button class="btn sm" data-go="home">Strona główna</button>`:`<button class="btn sm" data-go="admin">Panel ${m.role==='admin'?'admina':'edytora'}</button>`;
+  who+=m?`<button class="btn sm" data-logout>Wyloguj z panelu</button>`:`<button class="btn sm" data-go="login">Dla organizatorów</button>`;
+  $('#who').innerHTML=who;
+  $('#peopleList').innerHTML=state.people.map(p=>`<option value="${esc(p.name)}">`).join('');
+  document.title=ORG;
+  if(!loaded){$('#view').innerHTML='<div class="loading">Ładowanie…</div>';return}
+  let h;
+  if(ui.screen==='event')h=vEvent();
+  else if(ui.screen==='me')h=vMe();
+  else if(ui.screen==='login')h=(m?(setTimeout(()=>go('#/admin')),''):vLogin());
+  else if(ui.screen==='admin')h=m?vAdmin():vLogin();
+  else h=vHome();
+  $('#view').innerHTML=h;
 }
-function renderHeader(){
-  const s=state.settings;
-  $('#orgName').textContent=s.name||'Nasze stowarzyszenie';
-  document.title=(s.name||'Planer')+' – planer';
-  const b=$('#bib');const name=esc(s.eventName||'Fort Run');
-  if(!s.eventDate){b.innerHTML=`<div class="lbl">${name}</div><button type="button" data-open-settings>Ustaw datę biegu</button>`;return}
-  const n=daysBetween(today(),s.eventDate);
-  const d=fmt(s.eventDate,{day:'numeric',month:'long',year:'numeric'});
-  if(n>0)b.innerHTML=`<div class="num">${n}</div><div class="lbl">${n===1?'dzień':'dni'} do biegu ${name}</div><div class="dt">${d}</div>`;
-  else if(n===0)b.innerHTML=`<div class="num">Dziś</div><div class="lbl">${name}. Powodzenia!</div><div class="dt">${d}</div>`;
-  else b.innerHTML=`<div class="lbl">${name} za nami</div><div class="dt">${d}</div><button type="button" data-open-settings>Ustaw kolejną edycję</button>`;
+function nameBox(title,sub){
+  return `<div class="namebox"><h3>${title}</h3><p>${sub}</p>
+    <form class="inrow nameForm" novalidate><input class="in" name="n" list="peopleList" autocomplete="name" placeholder="Anna Kowalska" aria-label="Imię i nazwisko"><button class="btn primary">Dalej</button></form>
+    <p class="err nameErr" style="margin:8px 0 0"></p></div>`;
 }
-function tagHtml(cat){return `<span class="tag cat-${cat||'inne'}">${CATS[cat]||'Inne'}</span>`}
-function dueHtml(t){
-  if(!t.date)return '';
-  const diff=daysBetween(today(),t.date);
-  const label=diff===0?'dziś':diff===1?'jutro':fmt(t.date,{day:'numeric',month:'short'});
-  const late=!t.done&&diff<0;
-  return `<span class="${late?'late':''}">${late?'Po terminie · ':''}${t.kind==='event'?'':'do '}${label}${t.time?' '+t.time:''}</span>`;
+function dateBox(e){
+  if(!e)return `<div class="evdate gen">EK</div>`;
+  if(!e.date)return `<div class="evdate t-${typeOf(e)}"><b>?</b><small>bez daty</small></div>`;
+  return `<div class="evdate t-${typeOf(e)}"><b>${parse(e.date).getDate()}</b><small>${fmt(e.date,{month:'short'}).replace('.','')}</small></div>`;
 }
-function emptyBox(h,p,btn){return `<div class="empty"><h3>${h}</h3><p>${p}</p>${btn||''}</div>`}
+function soon(d){const n=daysBetween(today(),d);if(n<0)return '';if(n===0)return 'dziś';if(n===1)return 'jutro';if(n<7)return 'za '+n+' dni';if(n<14)return 'za tydzień';if(n<60)return 'za '+Math.round(n/7)+' tyg.';return 'za '+Math.round(n/30)+' mies.'}
+function evCard(e){
+  const id=e?e.id:'_general',list=tasksForEvent(id),mb=member();
+  const mine=mb?list.filter(t=>isMine(t,mb.id)&&!t.done).length:0;
+  const meta=e?[e.date?fmt(e.date,{weekday:'long',day:'numeric',month:'long'})+(e.time?', '+e.time:''):'',e.place].filter(Boolean).map(esc).join(' · '):'Zadania stałe stowarzyszenia';
+  return `<button class="evcard" data-go="e/${id}">${dateBox(e)}<div>${e?`<div class="tline">${typeTag(e)}${e.date?`<span class="soon">${soon(e.date)}</span>`:''}</div>`:''}<h3>${e?esc(e.name):'Stowarzyszenie'}</h3><p>${meta}</p><p>${mb?(mine?`<b class="mine-cnt">${mine} ${mine===1?'Twoje zadanie':'Twoich zadań'}</b>`:'Brak Twoich zadań'):list.length+' '+(list.length===1?'zadanie':'zadań')}</p></div></button>`;
+}
+function vHome(){
+  const t=today(),ft=e=>ui.fType==='all'||typeOf(e)===ui.fType,mb=member();
+  const dated=state.events.filter(e=>e.date&&e.date>=t&&ft(e)).sort(sortByDate);
+  const nodate=state.events.filter(e=>!e.date&&ft(e));
+  const past=state.events.filter(e=>e.date&&e.date<t&&ft(e)).sort(sortByDate).reverse();
+  let h='';
+  if(mb){const open=state.tasks.filter(x=>isMine(x,mb.id)&&!x.done).length;
+    h+=`<button class="hello" data-go="me">${avatar(mb,56)}<div><b>Cześć, ${esc(shortName(mb))}!</b><span>${open?`Masz ${open} ${open===1?'zadanie':'zadań'} do zrobienia.`:'Nie masz zadań do zrobienia.'} Kliknij, żeby otworzyć swoje konto.</span></div><span class="pdot" style="background:${colorOf(mb)}"></span></button>`}
+  else h+=nameBox('Twoje konto','Wpisz imię i nazwisko, żeby zobaczyć swoje zadania, kalendarz i ustawić zdjęcie.');
+  if(!state.events.length&&!state.tasks.length)
+    return h+`<div class="empty" style="margin-top:18px"><h3>Nie ma jeszcze żadnych wydarzeń</h3><p>Organizator doda je w panelu.</p></div>`;
+  const used=Object.keys(TYPES).filter(k=>state.events.some(e=>typeOf(e)===k));
+  h+=`<div class="bar" style="margin-top:22px"><h2 class="ptitle grow">Wydarzenia</h2>${dated.length?`<button class="btn sm" data-ics="all">Pobierz wszystkie do kalendarza</button>`:''}</div>`;
+  if(used.length>1)h+=`<div class="bar"><div class="seg wrap-seg" role="group" aria-label="Rodzaj wydarzenia"><button aria-pressed="${ui.fType==='all'}" data-ftype="all">Wszystkie</button>${used.map(k=>`<button aria-pressed="${ui.fType===k}" data-ftype="${k}">${TYPES[k].i} ${TYPES[k].l}</button>`).join('')}</div></div>`;
+  if(dated.length){
+    const n=dated[0],l=tasksForEvent(n.id);
+    h+=`<p class="sect" style="margin-top:6px">Najbliższe</p><button class="next t-${typeOf(n)}" data-go="e/${n.id}"><div class="nd"><b>${parse(n.date).getDate()}</b><small>${fmt(n.date,{day:'numeric',month:'long'}).replace(/^\d+\s*/,'')}</small></div><div class="nb"><div class="tline">${typeTag(n)}<span class="soon">${soon(n.date)}</span></div><h3>${esc(n.name)}</h3><p>${[fmt(n.date,{weekday:'long'})+(n.time?', godz. '+n.time:''),n.place].filter(Boolean).map(esc).join(' · ')}</p><p>${l.length} ${l.length===1?'zadanie':'zadań'} · Kliknij i zobacz szczegóły</p></div></button>`;
+    if(dated.length>1)h+=`<p class="sect">Kolejne</p><div class="evgrid">${dated.slice(1).map(evCard).join('')}</div>`;
+  }
+  if(nodate.length)h+=`<p class="sect">Termin do ustalenia</p><div class="evgrid">${nodate.map(evCard).join('')}</div>`;
+  if(ui.fType==='all'&&tasksForEvent('_general').length)h+=`<p class="sect">Zadania stałe</p><div class="evgrid">${evCard(null)}</div>`;
+  if(!dated.length&&!nodate.length&&ui.fType!=='all')h+=`<div class="empty"><h3>Brak nadchodzących wydarzeń tego rodzaju</h3><p>Wybierz inny rodzaj albo „Wszystkie”.</p></div>`;
+  if(past.length)h+=`<p class="sect">Minione</p><div class="evgrid past">${past.map(evCard).join('')}</div>`;
+  return h;
+}
+function whoBadges(t,pid){
+  if(t.all)return `<span class="wtag shared">👥 Cały zespół</span>`;
+  const a=assignees(t);if(a.length<2)return '';
+  return `<span class="wtag shared">👥 Wspólne: ${a.filter(id=>id!==pid).map(id=>esc(shortName(person(id)))).join(', ')}</span>`;
+}
+function myTaskRow(t,pid,showEvent){
+  const late=!t.done&&t.date&&t.date<today(),c=isShared(t)?'var(--shared)':colorOf(person(pid));
+  const by=t.done&&t.doneBy&&t.doneBy!==pid&&person(t.doneBy)?` · odhaczył(a) ${esc(shortName(person(t.doneBy)))}`:'';
+  return `<label class="mytask ${t.done?'done':''}" style="--pc:${c}"><input type="checkbox" data-toggle="${t.id}" ${t.done?'checked':''}><div><b>${esc(t.title)}</b>
+   <span class="mt-meta">${whoBadges(t,pid)}${showEvent?`<span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>`:''}${t.date?`<span class="${late?'late':''}">${late?'Po terminie · ':''}do ${fmt(t.date,{day:'numeric',month:'long'})}${t.time?', '+t.time:''}</span>`:''}${by}</span>${t.notes?`<span class="notes">${esc(t.notes)}</span>`:''}</div></label>`;
+}
+function vEvent(){
+  const id=ui.eventId,e=eventOf(id);
+  if(id!=='_general'&&!e)return `<div class="empty"><h3>Nie ma takiego wydarzenia</h3><p>Mogło zostać usunięte albo link jest niepełny.</p><button class="btn primary" data-go="home">Wszystkie wydarzenia</button></div>`;
+  const meta=e?[e.date?fmt(e.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(e.time?', godz. '+e.time+(e.endTime&&e.endTime>e.time?'–'+e.endTime:''):''):'',e.place].filter(Boolean).map(esc).join(' · '):'Zadania stałe, niezwiązane z konkretnym wydarzeniem';
+  let h=`<p style="margin:0 0 12px"><button class="linklike" data-go="home">‹ Wszystkie wydarzenia</button></p>
+  <div class="hero">${e?`<div class="tline" style="margin-bottom:6px">${typeTag(e)}${e.date?`<span class="soon">${soon(e.date)}</span>`:''}</div>`:''}<h2>${e?esc(e.name):'Stowarzyszenie'}</h2><div class="meta">${meta}</div>${e&&e.desc?`<p class="desc">${esc(e.desc)}</p>`:''}${calButtons(e)}</div>`;
+  const p=member();
+  if(!p)return h+nameBox('Kim jesteś?','Wpisz imię i nazwisko, żeby zobaczyć swoje zadania przy tym wydarzeniu.');
+  const mine=tasksForEvent(id).filter(t=>isMine(t,p.id)).sort((a,b)=>(a.done-b.done)||sortByDate(a,b));
+  const done=mine.filter(t=>t.done).length;
+  h+=`<div class="mehead">${avatar(p,48)}<div style="flex:1;min-width:180px"><b style="font-size:18px">Twoje zadania</b>
+    ${mine.length?`<div class="prog" style="max-width:280px"><i style="width:${Math.round(done/mine.length*100)}%;background:${colorOf(p)}"></i></div><span style="color:var(--muted);font-size:14px">${done} z ${mine.length} zrobione</span>`:''}</div>
+    <button class="btn sm" data-go="me">Moje konto</button><button class="btn sm" data-notme>To nie ja</button></div>`;
+  if(!mine.length)return h+`<div class="empty"><h3>Nie masz zadań przy tym wydarzeniu</h3><p>Jeśli to pomyłka, odezwij się do koordynatora.</p></div>`;
+  if(mine.some(t=>t.date&&!t.done))h+=`<div class="calrow" style="margin:0 0 14px"><span>Terminy tych zadań:</span><button class="btn sm" data-ics="mine:${id}">Dodaj do kalendarza</button></div>`;
+  if(done===mine.length)h+=`<div class="banner" style="background:var(--moss-bg);color:var(--moss-ink)">Wszystko zrobione. Dziękujemy!</div>`;
+  return h+mine.map(t=>myTaskRow(t,p.id,false)).join('');
+}
 
-function vTasks(){
-  const all=state.tasks.filter(t=>t.kind!=='event');
-  if(!all.length)return emptyBox('Dodaj pierwsze zadanie','Przypisz je do osoby i kategorii. Zadania z datą pojawią się też w terminarzu i planerze.',
-    `<button class="btn primary" data-new="task">Dodaj zadanie</button>${state.people.length?'':' <button class="btn" data-new="person">Najpierw dodaj zespół</button>'}`);
-  let list=all.filter(t=>(ui.cat==='all'||t.cat===ui.cat)&&(ui.showDone||!t.done));
-  if(ui.person!=='all')list=list.filter(t=>(ui.person==='none'?!person(t.personId):t.personId===ui.person));
-  const bar=`<div class="bar">
-    <div class="seg" role="group" aria-label="Kategoria">${[['all','Wszystkie'],...Object.entries(CATS)].map(([k,l])=>`<button aria-pressed="${ui.cat===k}" data-cat="${k}">${l}</button>`).join('')}</div>
-    <select class="in" id="personFilter" aria-label="Osoba"><option value="all">Wszyscy</option>${state.people.map(p=>`<option value="${p.id}" ${ui.person===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}<option value="none" ${ui.person==='none'?'selected':''}>Nieprzypisane</option></select>
-    <label class="chk"><input type="checkbox" id="showDone" ${ui.showDone?'checked':''}> Pokaż zrobione</label>
-  </div>`;
-  const groups=[...state.people.map(p=>({p,items:list.filter(t=>t.personId===p.id)})),{p:null,items:list.filter(t=>!person(t.personId))}].filter(g=>g.items.length);
-  if(!groups.length)return bar+emptyBox('Nic tu nie ma','Zmień filtry albo zaznacz „Pokaż zrobione”.');
+/* ---------- moje konto ---------- */
+function vMe(){
+  const p=member();
+  if(!p)return nameBox('Twoje konto','Wpisz imię i nazwisko, żeby otworzyć swoje konto.');
+  const open=state.tasks.filter(t=>isMine(t,p.id)&&!t.done).length;
+  const tabs=[['zadania','Moje zadania'],['kalendarz','Mój kalendarz'],['profil','Profil']];
+  let h=`<div class="profhead" style="--pc:${colorOf(p)}">${avatar(p,72)}<div><h2>${esc(p.name)}</h2><p>${[p.nick?'„'+esc(p.nick)+'”':'',esc(p.func||''),open?open+' do zrobienia':'wszystko zrobione'].filter(Boolean).join(' · ')}</p></div><button class="btn sm" data-notme>To nie ja</button></div>
+  <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${ui.meTab===k}" data-go="me/${k}">${l}</button>`).join('')}</nav>`;
+  if(ui.meTab==='profil')return h+vProfile(p);
+  if(ui.meTab==='kalendarz')return h+legend(p)+planner(p.id);
+  const mine=state.tasks.filter(t=>isMine(t,p.id));
+  if(!mine.length)return h+`<div class="empty"><h3>Nie masz jeszcze żadnych zadań</h3><p>Gdy koordynator coś Ci przypisze, pojawi się tutaj.</p></div>`;
+  const todo=mine.filter(t=>!t.done).sort(sortByDate),done=mine.filter(t=>t.done).sort(sortByDate);
+  if(todo.some(t=>t.date))h+=`<div class="calrow" style="margin:0 0 14px"><span>Terminy wszystkich moich zadań:</span><button class="btn sm" data-ics="mineall">Dodaj do kalendarza</button></div>`;
+  h+=todo.length?todo.map(t=>myTaskRow(t,p.id,true)).join(''):`<div class="banner" style="background:var(--moss-bg);color:var(--moss-ink)">Wszystko zrobione. Dziękujemy!</div>`;
+  if(done.length)h+=`<p class="sect">Zrobione (${done.length})</p>`+done.map(t=>myTaskRow(t,p.id,true)).join('');
+  return h;
+}
+function swatches(name,cur){return `<div class="swatches" role="radiogroup" aria-label="Kolor">${PALETTE.map(c=>`<label class="sw" style="--c:${c}"><input type="radio" name="${name}" value="${c}" ${c===cur?'checked':''} aria-label="Kolor ${c}"><span></span></label>`).join('')}</div>`}
+function vProfile(p){
+  return `<form id="profileForm" class="namebox" novalidate style="max-width:620px">
+    <div class="photo">${`<div class="av" id="profPrev" style="width:96px;height:96px;font-size:34px">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</div>`}
+      <div><label class="btn sm" style="display:inline-block">Zmień zdjęcie<input type="file" accept="image/*" id="profPhoto" hidden></label> <button type="button" class="btn sm" id="profPhotoClear">Usuń zdjęcie</button></div></div>
+    <label class="fld">Imię i nazwisko<input class="in" value="${esc(p.name)}" disabled><span class="hint">Zmienia je organizator.</span></label>
+    <label class="fld">Pseudonim<input class="in" name="nick" maxlength="30" value="${esc(p.nick||'')}" placeholder="Ania"><span class="hint">Tak będą Cię widzieć inni w zadaniach i kalendarzu.</span></label>
+    <div class="fld"><span>Twój kolor w kalendarzu</span>${swatches('color',colorOf(p))}</div>
+    <div class="dacts"><button class="btn primary">Zapisz profil</button></div></form>`;
+}
+function legend(p){
+  const people=p?[p]:state.people;
+  return `<div class="legend">${people.map(x=>`<span><i style="background:${colorOf(x)}"></i>${esc(p?'Moje zadania':shortName(x))}</span>`).join('')}<span><i style="background:var(--shared)"></i>Wspólne</span><span><i class="evl"></i>Wydarzenia</span></div>`;
+}
+
+/* ---------- logowanie ---------- */
+function vLogin(){
+  if(!hasAdmin())return `<div class="namebox center"><h3>Utwórz konto administratora</h3><p>To pierwsze uruchomienie. Administrator ma pełny dostęp: dodaje ludzi, nadaje role i zarządza wszystkim.</p>
+    <form id="setupForm" novalidate><label class="fld">Imię i nazwisko<input class="in" name="n" autocomplete="name" placeholder="Krystian Nowak"></label>
+    <div class="two"><label class="fld">PIN<input class="in" name="p" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label><label class="fld">Powtórz PIN<input class="in" name="p2" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label></div>
+    <p class="err">${esc(ui.loginErr)}</p><button class="btn primary">Utwórz konto</button></form></div>`;
+  return `<div class="namebox center"><h3>Panel organizatora</h3><p>Dla edytorów i administratorów. Uczestnicy nie muszą się tu logować.</p>
+    <form id="loginForm" novalidate><label class="fld">Imię i nazwisko<input class="in" name="n" list="peopleList" autocomplete="name"></label>
+    <label class="fld">PIN<input class="in" name="p" type="password" inputmode="numeric" maxlength="12" autocomplete="current-password"></label>
+    <p class="err">${esc(ui.loginErr)}</p><button class="btn primary">Zaloguj</button></form></div>`;
+}
+
+/* ---------- panel ---------- */
+function vAdmin(){
+  const tabs=[['zadania','Zadania'],['wydarzenia','Wydarzenia'],['planer','Kalendarz'],['zespol','Zespół i role']];
+  return `<div class="bar"><button class="btn primary" data-new="task">Dodaj zadanie</button><button class="btn" data-new="event">Dodaj wydarzenie</button><button class="btn" data-new="person">Dodaj osobę</button></div>
+  <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${ui.tab===k}" data-go="admin/${k}">${l}</button>`).join('')}</nav>`+
+  ({zadania:aTasks,wydarzenia:aEvents,planer:aPlanner,zespol:aTeam}[ui.tab]||aTasks)();
+}
+function evOptions(sel,withAll){return (withAll?`<option value="all" ${sel==='all'?'selected':''}>Wszystkie wydarzenia</option>`:'')+`<option value="_general" ${sel==='_general'?'selected':''}>Stowarzyszenie (ogólne)</option>`+state.events.slice().sort(sortByDate).map(e=>`<option value="${e.id}" ${sel===e.id?'selected':''}>${esc(e.name)}</option>`).join('')}
+function adminRow(t,ctxPid){
+  const late=!t.done&&t.date&&t.date<today(),c=isShared(t)?'var(--shared)':colorOf(person(assignees(t)[0]));
+  return `<div class="row ${t.done?'done':''}" style="box-shadow:inset 4px 0 0 ${isUnassigned(t)?'transparent':c}"><input type="checkbox" ${t.done?'checked':''} data-toggle="${t.id}" aria-label="Zrobione"><button class="main" data-edit="${t.id}"><span class="t">${esc(t.title)}</span><span class="meta"><span class="tag ${eventOf(t.eventId)?'cat-fort':'cat-stow'}">${esc(evName(t.eventId))}</span>${whoBadges(t,ctxPid)}${t.date?`<span class="${late?'late':''}">${late?'Po terminie · ':''}do ${fmt(t.date,{day:'numeric',month:'short'})}${t.time?' '+t.time:''}</span>`:''}</span></button></div>`;
+}
+function aTasks(){
+  const all=state.tasks;
+  if(!all.length)return `<div class="empty"><h3>Dodaj pierwsze zadanie</h3><p>Przypisz je do jednej osoby, kilku albo całego zespołu.</p><button class="btn primary" data-new="task">Dodaj zadanie</button></div>`;
+  const list=all.filter(t=>(ui.showDone||!t.done)&&(ui.fEvent==='all'||(ui.fEvent==='_general'?!eventOf(t.eventId):t.eventId===ui.fEvent)));
+  const bar=`<div class="bar"><select class="in" id="fEvent" aria-label="Wydarzenie">${evOptions(ui.fEvent,true)}</select>
+    <select class="in" id="fPerson" aria-label="Osoba"><option value="all">Wszyscy</option>${state.people.map(p=>`<option value="${p.id}" ${ui.fPerson===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}<option value="none" ${ui.fPerson==='none'?'selected':''}>Nieprzypisane</option></select>
+    <label class="chk"><input type="checkbox" id="showDone" ${ui.showDone?'checked':''}> Pokaż zrobione</label></div>`;
+  let groups=[];
+  if(ui.fPerson==='all'||ui.fPerson==='team')groups.push({team:true,items:list.filter(t=>t.all)});
+  state.people.forEach(p=>{if(ui.fPerson==='all'||ui.fPerson===p.id)groups.push({p,items:list.filter(t=>!t.all&&assignees(t).includes(p.id))})});
+  if(ui.fPerson==='all'||ui.fPerson==='none')groups.push({none:true,items:list.filter(isUnassigned)});
+  groups=groups.filter(g=>g.items.length);
+  if(!groups.length)return bar+`<div class="empty"><h3>Nic tu nie ma</h3><p>Zmień filtry albo zaznacz „Pokaż zrobione”.</p></div>`;
   return bar+groups.map(g=>{
-    const open=all.filter(t=>!t.done&&(g.p?t.personId===g.p.id:!person(t.personId))).length;
-    return `<section class="group"><div class="ghead">${avatar(g.p,40)}<div><h3>${g.p?esc(g.p.name):'Nieprzypisane'}</h3>${g.p&&g.p.role?`<div class="sub">${esc(g.p.role)}</div>`:''}</div><div class="cnt">${open} do zrobienia</div></div>
-    ${g.items.sort((a,b)=>(a.done-b.done)||sortByDate(a,b)).map(t=>`<div class="row ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} data-toggle="${t.id}" aria-label="Oznacz jako zrobione"><button class="main" data-edit="${t.id}"><span class="t">${esc(t.title)}</span><span class="meta">${tagHtml(t.cat)}${dueHtml(t)}${t.notes?`<span>${esc(t.notes.slice(0,80))}${t.notes.length>80?'…':''}</span>`:''}</span></button></div>`).join('')}</section>`}).join('');
+    const head=g.team?`<span class="av" style="width:40px;height:40px;background:var(--shared);color:var(--paper);font-size:18px">👥</span><div><h3>Cały zespół</h3><div class="sub">Zadania wspólne</div></div>`
+      :g.none?`${avatar(null,40)}<div><h3>Nieprzypisane</h3></div>`
+      :`<span class="avwrap" style="--pc:${colorOf(g.p)}">${avatar(g.p,40)}</span><div><h3>${esc(dispName(g.p))}</h3><div class="sub">${esc(g.p.func||ROLES[g.p.role]||'')}</div></div>`;
+    const open=g.items.filter(t=>!t.done).length;
+    return `<section class="group"><div class="ghead">${head}<div class="cnt">${open} do zrobienia</div></div>${g.items.sort((a,b)=>(a.done-b.done)||sortByDate(a,b)).map(t=>adminRow(t,g.p?.id)).join('')}</section>`}).join('');
+}
+function aEvents(){
+  const t0=today(),evs=[...state.events.filter(e=>!e.date||e.date>=t0).sort(sortByDate),...state.events.filter(e=>e.date&&e.date<t0).sort(sortByDate).reverse()];
+  if(!evs.length)return `<div class="empty"><h3>Dodaj pierwsze wydarzenie</h3><p>Każde wydarzenie ma własną stronę, którą wysyłasz uczestnikom.</p><button class="btn primary" data-new="event">Dodaj wydarzenie</button></div>`;
+  return evs.map(e=>{const l=tasksForEvent(e.id),d=l.filter(t=>t.done).length;
+    return `<div class="evrow">${dateBox(e)}<div class="grow"><div class="tline">${typeTag(e)}${e.date&&e.date<t0?'<span class="soon">minione</span>':e.date?`<span class="soon">${soon(e.date)}</span>`:''}</div><h3>${esc(e.name)}</h3><p>${[e.date?fmt(e.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(e.time?', '+e.time:''):'bez daty',e.place].filter(Boolean).map(esc).join(' · ')}</p></div>
+    <div><div class="prog"><i style="width:${l.length?Math.round(d/l.length*100):0}%"></i></div><p style="font-size:13px;color:var(--muted);margin:0">${d} z ${l.length} zadań zrobione</p></div>
+    <div class="inrow" style="flex:none"><button class="btn sm" data-copy="${e.id}">Kopiuj link</button><button class="btn sm" data-go="e/${e.id}">Otwórz</button><button class="btn sm" data-edit-event="${e.id}">Edytuj</button></div></div>`}).join('');
+}
+function aTeam(){
+  const help=`<div class="roles-help"><b>Członek</b> wpisuje imię, ma swoje konto z zadaniami i kalendarzem, może zmienić zdjęcie, pseudonim i kolor. <b>Edytor</b> loguje się PIN-em do panelu i zarządza zadaniami, wydarzeniami i członkami. <b>Administrator</b> ma pełny dostęp, w tym nadawanie ról i PIN-ów.</div>`;
+  const cards=state.people.map(p=>{const open=state.tasks.filter(t=>isMine(t,p.id)&&!t.done).length;
+    return `<article class="pcard" style="--pc:${colorOf(p)}"><button class="ph" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</button><div class="bd"><b>${esc(p.name)}</b>${p.nick?`<span>„${esc(p.nick)}”</span>`:''}<span>${esc(p.func||'')}</span><span><span class="role role-${p.role||'member'}">${ROLES[p.role]||ROLES.member}</span></span><span>${open} ${open===1?'zadanie':'zadań'} do zrobienia</span><button class="btn sm" data-show-person="${p.id}">Pokaż zadania</button></div></article>`}).join('');
+  return help+`<div class="team">${cards}<button class="pcard add" data-new="person"><span class="plus">+</span>Dodaj osobę</button></div>`;
+}
+function aPlanner(){
+  const sel=`<select class="in" id="fCal" aria-label="Czyj kalendarz"><option value="all">Wszyscy</option>${state.people.map(p=>`<option value="${p.id}" ${ui.fCal===p.id?'selected':''}>${esc(dispName(p))}</option>`).join('')}</select>`;
+  const pid=ui.fCal!=='all'&&person(ui.fCal)?ui.fCal:null;
+  return `<div class="bar"><span style="font-size:14px;color:var(--muted)">Pokaż kalendarz:</span>${sel}</div>`+legend(pid?person(pid):null)+planner(pid);
 }
 
-function itemBtn(t){
-  if(t.special)return `<div class="item special"><span class="tm">🏁</span><span class="tt"><b>${esc(t.title)}</b><span>Dzień biegu</span></span></div>`;
-  const p=person(t.personId);
-  return `<button class="item ${t.done?'isdone':''}" data-edit="${t.id}"><span class="tm">${t.time||'–'}</span><span class="tt"><b>${esc(t.title)}</b><span>${t.kind==='event'?'Wydarzenie':'Zadanie'}${p?' · '+esc(p.name):''}</span></span>${tagHtml(t.cat)}</button>`;
+/* ---------- kalendarz (widoki) ---------- */
+function itemsOn(d,pid){
+  const ev=state.events.filter(e=>e.date===d).map(e=>({...e,isEvent:true,title:e.name}));
+  return ev.concat(state.tasks.filter(t=>t.date===d&&(!pid||isMine(t,pid))).sort(sortByDate));
 }
-function dayLabel(d){const diff=daysBetween(today(),d);return (diff===0?'Dziś':diff===1?'Jutro':fmt(d,{weekday:'long'}))}
-function vAgenda(){
-  const t0=today();
-  const late=state.tasks.filter(t=>t.date&&t.date<t0&&!t.done&&t.kind!=='event').sort(sortByDate);
-  const up=state.tasks.filter(t=>t.date&&t.date>=t0&&!(t.done&&t.kind!=='event'));
-  const dates=[...new Set(up.map(t=>t.date).concat(state.settings.eventDate>=t0&&state.settings.eventDate?[state.settings.eventDate]:[]))].sort();
-  let h=`<div class="bar"><span class="grow" style="color:var(--muted);font-size:14px">Wszystko, co ma datę, od dziś w przód</span><button class="btn" data-new="event">Dodaj wydarzenie</button></div>`;
-  if(!late.length&&!dates.length)return h+emptyBox('Terminarz jest pusty','Dodaj wydarzenie, np. zebranie zarządu, albo nadaj zadaniu datę.','<button class="btn primary" data-new="event">Dodaj wydarzenie</button>');
-  h+='<div class="agenda">';
-  if(late.length)h+=`<div class="day"><div class="dl late">Po terminie<small>${late.length} ${late.length===1?'zadanie':'zadań'}</small></div><div class="items">${late.map(itemBtn).join('')}</div></div>`;
-  h+=dates.map(d=>`<div class="day"><div class="dl" style="text-transform:capitalize">${dayLabel(d)}<small>${fmt(d,{day:'numeric',month:'long'})}</small></div><div class="items">${itemsOn(d).filter(t=>t.special||!(t.done&&t.kind!=='event')).map(itemBtn).join('')}</div></div>`).join('');
-  return h+'</div>';
+function taskColor(t,pid){if(isShared(t))return 'var(--shared)';const a=assignees(t);if(!a.length)return 'var(--muted)';return colorOf(person(pid&&a.includes(pid)?pid:a[0]))}
+function chip(t,pid){
+  if(t.isEvent)return `<button class="chip ev-chip t-${typeOf(t)}" ${me()?`data-edit-event="${t.id}"`:`data-go="e/${t.id}"`} title="${esc(t.title)}">${TYPES[typeOf(t)].i} ${t.time?`<span class="tm">${t.time}</span>`:''}${esc(t.title)}</button>`;
+  const lbl=isShared(t)?'👥 ':(!pid&&assignees(t).length?esc(shortName(person(assignees(t)[0])))+': ':'');
+  return `<button class="chip task ${t.done?'done':''}" style="--pc:${taskColor(t,pid)}" ${me()?`data-edit="${t.id}"`:`data-go="me/zadania"`} title="${esc(t.title+' – '+whoLabel(t))}">${t.time?`<span class="tm">${t.time}</span>`:''}${lbl}${esc(t.title)}</button>`;
 }
-
-function chip(t){
-  if(t.special)return `<span class="chip special">🏁 ${esc(t.title)}</span>`;
-  return `<button class="chip cat-${t.cat||'inne'} ${t.kind==='event'?'ev':''} ${t.done?'done':''}" data-edit="${t.id}" title="${esc(t.title)}">${t.time?`<span class="tm">${t.time}</span>`:''}${esc(t.title)}</button>`;
+function itemBtn(t,pid){
+  if(t.isEvent)return `<button class="item ev-item t-${typeOf(t)}" ${me()?`data-edit-event="${t.id}"`:`data-go="e/${t.id}"`}><span class="tm">${t.time||TYPES[typeOf(t)].i}</span><span class="tt"><b>${esc(t.title)}</b><span>${TYPES[typeOf(t)].l}${t.place?' · '+esc(t.place):''}</span></span></button>`;
+  return `<button class="item task-item ${t.done?'isdone':''}" style="--pc:${taskColor(t,pid)}" ${me()?`data-edit="${t.id}"`:`data-go="me/zadania"`}><span class="tm">${t.time||'–'}</span><span class="tt"><b>${esc(t.title)}</b><span>${esc(evName(t.eventId))} · ${isShared(t)?'👥 ':''}${esc(whoLabel(t))}</span></span></button>`;
 }
-function vPlanner(){
+function planner(pid){
   const c=ui.cursor,v=ui.pview;let title='',body='';
   if(v==='day'){
-    const d=ymd(c);title=fmt(c,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const list=itemsOn(d);
-    body=(list.length?`<div class="items" style="display:flex;flex-direction:column;gap:6px">${list.map(itemBtn).join('')}</div>`:emptyBox('Wolny dzień','Nic nie jest zaplanowane na ten dzień.',''))+
-      `<div class="bar" style="margin-top:14px"><button class="btn" data-new="task" data-date="${d}">Dodaj zadanie na ten dzień</button><button class="btn" data-new="event" data-date="${d}">Dodaj wydarzenie</button></div>`;
+    const d=ymd(c);title=fmt(c,{weekday:'long',day:'numeric',month:'long',year:'numeric'});const l=itemsOn(d,pid);
+    body=(l.length?`<div style="display:flex;flex-direction:column;gap:6px">${l.map(t=>itemBtn(t,pid)).join('')}</div>`:`<div class="empty"><h3>Wolny dzień</h3><p>Nic nie jest zaplanowane na ten dzień.</p></div>`)+
+      (me()?`<div class="bar" style="margin-top:14px"><button class="btn" data-new="task" data-date="${d}">Dodaj zadanie na ten dzień</button><button class="btn" data-new="event" data-date="${d}">Dodaj wydarzenie</button></div>`:'');
   }else if(v==='week'){
-    const s=weekStart(c),e=addDays(s,6);
-    title=`${fmt(s,{day:'numeric',month:'short'})} – ${fmt(e,{day:'numeric',month:'short',year:'numeric'})}`;
-    body='<div class="week">'+[...Array(7)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd);return `<div class="wcol ${d===today()?'today':''}"><button class="dhead" data-day="${d}"><small>${WD[i]}</small><b>${dd.getDate()}</b></button>${itemsOn(d).map(chip).join('')}</div>`}).join('')+'</div>';
+    const s=weekStart(c),e=addDays(s,6);title=`${fmt(s,{day:'numeric',month:'short'})} – ${fmt(e,{day:'numeric',month:'short',year:'numeric'})}`;
+    body='<div class="week">'+[...Array(7)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd);return `<div class="wcol ${d===today()?'today':''}"><button class="dhead" data-day="${d}"><small>${WD[i]}</small><b>${dd.getDate()}</b></button>${itemsOn(d,pid).map(t=>chip(t,pid)).join('')}</div>`}).join('')+'</div>';
   }else if(v==='month'){
-    title=fmt(c,{month:'long',year:'numeric'});
-    const first=new Date(c.getFullYear(),c.getMonth(),1),s=weekStart(first);
-    body='<div class="month">'+WD.map(w=>`<div class="wd">${w}</div>`).join('')+[...Array(42)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd),it=itemsOn(d);
-      return `<div class="mcell ${dd.getMonth()!==c.getMonth()?'out':''} ${d===today()?'today':''}"><button class="dn" data-day="${d}" aria-label="${fmt(dd,{day:'numeric',month:'long'})}">${dd.getDate()}</button>${it.slice(0,3).map(chip).join('')}${it.length>3?`<button class="more" data-day="${d}">+${it.length-3} więcej</button>`:''}<div class="dots">${it.map(t=>`<span class="dot" style="background:${t.special||t.cat==='fort'?'var(--bib)':t.cat==='stow'?'var(--moss)':'var(--muted)'}"></span>`).join('')}</div></div>`}).join('')+'</div>';
+    title=fmt(c,{month:'long',year:'numeric'});const s=weekStart(new Date(c.getFullYear(),c.getMonth(),1));
+    body='<div class="month">'+WD.map(w=>`<div class="wd">${w}</div>`).join('')+[...Array(42)].map((_,i)=>{const dd=addDays(s,i),d=ymd(dd),it=itemsOn(d,pid);
+      return `<div class="mcell ${dd.getMonth()!==c.getMonth()?'out':''} ${d===today()?'today':''}"><button class="dn" data-day="${d}">${dd.getDate()}</button>${it.slice(0,3).map(t=>chip(t,pid)).join('')}${it.length>3?`<button class="more" data-day="${d}">+${it.length-3} więcej</button>`:''}<div class="dots">${it.map(t=>`<span class="dot ${t.isEvent?'t-'+typeOf(t):''}" style="${t.isEvent?'':'background:'+taskColor(t,pid)}"></span>`).join('')}</div></div>`}).join('')+'</div>';
   }else{
     const y=c.getFullYear();title=String(y);
-    const dated=new Set(state.tasks.filter(t=>t.date).map(t=>t.date));
-    body='<div class="year">'+[...Array(12)].map((_,m)=>{const first=new Date(y,m,1),off=(first.getDay()+6)%7,n=new Date(y,m+1,0).getDate();
-      return `<div class="ymon"><h4><button data-month="${m}">${fmt(first,{month:'long'})}</button></h4><div class="ygrid">${WD.map(w=>`<span class="h">${w[0]}</span>`).join('')}${'<span></span>'.repeat(off)}${[...Array(n)].map((_,i)=>{const d=ymd(new Date(y,m,i+1));const cls=[d===state.settings.eventDate?'race':dated.has(d)?'has':'',d===today()?'today':''].join(' ');return `<button class="${cls}" data-day="${d}">${i+1}</button>`}).join('')}</div></div>`}).join('')+'</div>';
+    const tmap=new Map();state.tasks.filter(t=>t.date&&(!pid||isMine(t,pid))).forEach(t=>{if(!tmap.has(t.date))tmap.set(t.date,taskColor(t,pid))});
+    const ed=new Map(state.events.filter(e=>e.date).map(e=>[e.date,typeOf(e)]));
+    body='<div class="year">'+[...Array(12)].map((_,m)=>{const f=new Date(y,m,1),off=(f.getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+      return `<div class="ymon"><h4><button data-month="${m}">${fmt(f,{month:'long'})}</button></h4><div class="ygrid">${WD.map(w=>`<span class="h">${w[0]}</span>`).join('')}${'<span></span>'.repeat(off)}${[...Array(n)].map((_,i)=>{const d=ymd(new Date(y,m,i+1));
+        const cls=ed.has(d)?'race t-'+ed.get(d):tmap.has(d)?'has':'';const st=!ed.has(d)&&tmap.has(d)?` style="background:${tmap.get(d)};color:#fff"`:'';
+        return `<button class="${cls} ${d===today()?'today':''}"${st} data-day="${d}">${i+1}</button>`}).join('')}</div></div>`}).join('')+'</div>';
   }
-  const views=[['day','Dzień'],['week','Tydzień'],['month','Miesiąc'],['year','Rok']];
-  return `<div class="bar"><div class="seg" role="group" aria-label="Zakres">${views.map(([k,l])=>`<button aria-pressed="${v===k}" data-pview="${k}">${l}</button>`).join('')}</div>
+  return `<div class="bar"><div class="seg" role="group" aria-label="Zakres">${[['day','Dzień'],['week','Tydzień'],['month','Miesiąc'],['year','Rok']].map(([k,l])=>`<button aria-pressed="${v===k}" data-pview="${k}">${l}</button>`).join('')}</div>
   <div class="seg"><button data-nav="-1" aria-label="Wstecz">‹</button><button data-nav="0">Dziś</button><button data-nav="1" aria-label="Dalej">›</button></div>
   <h2 class="ptitle grow" style="text-transform:${v==='day'?'none':'capitalize'}">${title}</h2></div>`+body;
 }
 
-function vTeam(){
-  const cards=state.people.map(p=>{const open=state.tasks.filter(t=>t.personId===p.id&&!t.done&&t.kind!=='event').length;
-    return `<article class="pcard"><button class="ph" data-edit-person="${p.id}" aria-label="Edytuj ${esc(p.name)}">${p.photo?`<img src="${esc(p.photo)}" alt="">`:esc(initials(p.name))}</button><div class="bd"><b>${esc(p.name)}</b><span>${esc(p.role||'Członek zespołu')}</span><span>${open} ${open===1?'zadanie':'zadań'} do zrobienia</span><button class="btn sm" data-show-person="${p.id}">Pokaż zadania</button></div></article>`}).join('');
-  return `<div class="team">${cards}<button class="pcard add" data-new="person"><span class="plus">+</span>Dodaj osobę</button></div>`;
-}
+/* ---------- zdjęcia ---------- */
+function readPhoto(file,cb){const r=new FileReader();
+  r.onload=()=>{const img=new Image();img.onload=()=>{const S=240,cv=document.createElement('canvas');cv.width=cv.height=S;const m=Math.min(img.width,img.height);
+    cv.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);cb(cv.toDataURL('image/jpeg',.82))};
+    img.onerror=()=>toast('Nie udało się wczytać zdjęcia. Wybierz plik JPG lub PNG.');img.src=r.result};r.readAsDataURL(file)}
 
-/* ---------- dialogs ---------- */
-let editingTask=null,editingPerson=null,photoData='';
-function openTask(t,preset){
-  editingTask=t||null;const f=$('#taskForm');
-  $('#taskDlgTitle').textContent=t?(t.kind==='event'?'Edytuj wydarzenie':'Edytuj zadanie'):(preset.kind==='event'?'Nowe wydarzenie':'Nowe zadanie');
-  f.person.innerHTML=`<option value="">Nikt (nieprzypisane)</option>`+state.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
-  const d=t||{kind:preset.kind||'task',cat:ui.cat!=='all'?ui.cat:'stow',personId:ui.person!=='all'&&ui.person!=='none'?ui.person:'',date:preset.date||'',time:'',notes:'',title:'',done:false};
-  f.title.value=d.title||'';f.kind.value=d.kind||'task';f.cat.value=d.cat||'stow';f.person.value=person(d.personId)?d.personId:'';
-  f.date.value=d.date||'';f.time.value=d.time||'';f.notes.value=d.notes||'';f.done.checked=!!d.done;
-  $('#doneWrap').style.display=t&&t.kind!=='event'?'':'none';$('#taskDel').style.display=t?'':'none';$('#taskErr').textContent='';
-  $('#taskDlg').showModal();f.title.focus();
+/* ---------- okna edycji ---------- */
+let editTask=null,editEvent=null,editPerson=null,photoData='',profPhoto=undefined;
+function openTask(t,preset={}){
+  editTask=t||null;const f=$('#taskForm');
+  $('#taskDlgTitle').textContent=t?'Edytuj zadanie':'Nowe zadanie';
+  const d=t||{title:'',eventId:preset.eventId||(ui.fEvent!=='all'&&ui.fEvent!=='_general'?ui.fEvent:''),personIds:ui.fPerson!=='all'&&ui.fPerson!=='none'?[ui.fPerson]:[],date:preset.date||'',time:'',notes:'',done:false,all:false};
+  f.event.innerHTML=evOptions(eventOf(d.eventId)?d.eventId:'_general');
+  const ids=assignees(d);
+  $('#assignBox').innerHTML=`<label class="asg team"><input type="checkbox" name="all" ${d.all?'checked':''}><span class="av" style="width:28px;height:28px;background:var(--shared);color:var(--paper);font-size:14px">👥</span><span>Cały zespół <small>(wspólne)</small></span></label>`+
+    state.people.map(p=>`<label class="asg"><input type="checkbox" name="pid" value="${p.id}" ${ids.includes(p.id)?'checked':''}><span class="avwrap" style="--pc:${colorOf(p)}">${avatar(p,28)}</span><span>${esc(dispName(p))}</span></label>`).join('')+
+    (state.people.length?'':`<p class="hint">Najpierw dodaj osoby w zakładce Zespół.</p>`);
+  syncAssign();
+  f.title.value=d.title;f.date.value=d.date||'';f.time.value=d.time||'';f.notes.value=d.notes||'';f.done.checked=!!d.done;
+  $('#taskDel').style.display=t?'':'none';$('#taskErr').textContent='';$('#taskDlg').showModal();f.title.focus();
 }
+function syncAssign(){const all=$('#taskForm').querySelector('[name=all]');if(!all)return;
+  $('#taskForm').querySelectorAll('[name=pid]').forEach(x=>{x.disabled=all.checked;x.closest('label').classList.toggle('off',all.checked)});
+  const n=[...$('#taskForm').querySelectorAll('[name=pid]:checked')].length;
+  $('#assignHint').textContent=all.checked?'Zadanie wspólne dla wszystkich. Wystarczy, że jedna osoba je odhaczy.':n>1?'Zadanie wspólne dla zaznaczonych osób.':n===1?'Zadanie jednej osoby.':'Nikt nie jest przypisany.'}
+$('#taskForm').addEventListener('change',e=>{if(e.target.name==='all'||e.target.name==='pid')syncAssign()});
 $('#taskForm').title.addEventListener('input',()=>$('#taskErr').textContent='');
-$('#taskForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target;
-  const title=f.title.value.trim();if(!title){$('#taskErr').textContent='Wpisz, co jest do zrobienia.';f.title.focus();return}
-  const t={id:editingTask?editingTask.id:uid(),title,kind:f.kind.value,cat:f.cat.value,personId:f.person.value,date:f.date.value,time:f.time.value,notes:f.notes.value.trim(),done:f.kind.value==='event'?false:f.done.checked,created:editingTask?.created||Date.now()};
-  if(await saveTask(t)){$('#taskDlg').close();toast(editingTask?'Zapisano zmiany':'Dodano')}});
-$('#taskDel').addEventListener('click',async()=>{if(editingTask&&confirm('Usunąć „'+editingTask.title+'”?')&&await deleteTask(editingTask.id)){$('#taskDlg').close();toast('Usunięto')}});
+$('#taskForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,title=f.title.value.trim();
+  if(!title){$('#taskErr').textContent='Wpisz, co jest do zrobienia.';f.title.focus();return}
+  const all=f.querySelector('[name=all]').checked,ids=all?[]:[...f.querySelectorAll('[name=pid]:checked')].map(x=>x.value);
+  const done=f.done.checked;
+  const t={id:editTask?editTask.id:uid(),title,eventId:f.event.value==='_general'?'':f.event.value,personIds:ids,all,date:f.date.value,time:f.time.value,notes:f.notes.value.trim(),done,doneBy:done?(editTask?.done?editTask.doneBy||'':me()?.id||''):'',created:editTask?.created||Date.now()};
+  if(await put('tasks',t)){$('#taskDlg').close();toast(editTask?'Zapisano zmiany':'Dodano zadanie')}});
+$('#taskDel').addEventListener('click',async()=>{if(editTask&&confirm('Usunąć zadanie „'+editTask.title+'”?')&&await del('tasks',editTask.id)){$('#taskDlg').close();toast('Usunięto')}});
+
+function openEvent(ev,preset={}){
+  editEvent=ev||null;const f=$('#eventForm');
+  $('#eventDlgTitle').textContent=ev?'Edytuj wydarzenie':'Nowe wydarzenie';
+  f.type.value=typeOf(ev);f.name.value=ev?.name||'';f.date.value=ev?.date||preset.date||'';f.time.value=ev?.time||'';f.endTime.value=ev?.endTime||'';f.place.value=ev?.place||'';f.desc.value=ev?.desc||'';
+  $('#eventDel').style.display=ev?'':'none';$('#eventErr').textContent='';$('#eventDlg').showModal();f.name.focus();
+}
+$('#eventForm').name.addEventListener('input',()=>$('#eventErr').textContent='');
+$('#eventForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,name=f.name.value.trim();
+  if(!name){$('#eventErr').textContent='Wpisz nazwę wydarzenia.';f.name.focus();return}
+  const ev={id:editEvent?editEvent.id:uid(),type:f.type.value,name,date:f.date.value,time:f.time.value,endTime:f.endTime.value,place:f.place.value.trim(),desc:f.desc.value.trim()};
+  if(await put('events',ev)){$('#eventDlg').close();toast(editEvent?'Zapisano zmiany':'Dodano wydarzenie')}});
+$('#eventDel').addEventListener('click',async()=>{if(!editEvent)return;const n=tasksForEvent(editEvent.id).length;
+  if(confirm('Usunąć wydarzenie „'+editEvent.name+'”?'+(n?' Jego zadania ('+n+') przejdą do zadań ogólnych.':''))&&await del('events',editEvent.id)){$('#eventDlg').close();toast('Usunięto')}});
 
 function setPhoto(src,name){photoData=src||'';$('#photoPrev').innerHTML=src?`<img src="${src}" alt="">`:esc(initials(name))}
+function syncPin(){const f=$('#personForm'),priv=f.role.value!=='member';$('#pinFld').style.display=priv?'':'none';
+  $('#pinHint').textContent=editPerson&&editPerson.pinHash?'Zostaw puste, żeby nie zmieniać PIN-u.':'Ta osoba poda PIN przy logowaniu do panelu.'}
 function openPerson(p){
-  editingPerson=p||null;const f=$('#personForm');
+  editPerson=p||null;const f=$('#personForm'),adm=isAdmin();
   $('#personDlgTitle').textContent=p?'Edytuj osobę':'Nowa osoba';
-  f.name.value=p?.name||'';f.role.value=p?.role||'';setPhoto(p?.photo||'',p?.name);
-  $('#personDel').style.display=p?'':'none';$('#personErr').textContent='';
-  $('#personDlg').showModal();f.name.focus();
+  f.name.value=p?.name||'';f.nick.value=p?.nick||'';f.func.value=p?.func||'';f.role.value=p?.role||'member';f.pin.value='';setPhoto(p?.photo||'',p?.name);
+  $('#personColors').innerHTML=swatches('pcolor',p?colorOf(p):nextColor());
+  $('#roleFields').style.display=adm?'':'none';syncPin();
+  $('#personDel').style.display=p&&(adm||p.role==='member')&&p.id!==me()?.id?'':'none';$('#personErr').textContent='';$('#personDlg').showModal();f.name.focus();
 }
+$('#personForm').role.addEventListener('change',syncPin);
 $('#personForm').name.addEventListener('input',e=>{$('#personErr').textContent='';if(!photoData)setPhoto('',e.target.value)});
-$('#photoIn').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();
-  r.onload=()=>{const img=new Image();img.onload=()=>{const S=240,cv=document.createElement('canvas');cv.width=cv.height=S;const m=Math.min(img.width,img.height);
-    cv.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);setPhoto(cv.toDataURL('image/jpeg',.82))};
-    img.onerror=()=>toast('Nie udało się wczytać tego zdjęcia. Wybierz plik JPG lub PNG.');img.src=r.result};
-  r.readAsDataURL(file);e.target.value=''});
+$('#photoIn').addEventListener('change',e=>{const file=e.target.files[0];if(file)readPhoto(file,setPhoto);e.target.value=''});
 $('#photoClear').addEventListener('click',()=>setPhoto('',$('#personForm').name.value));
-$('#personForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target;const name=f.name.value.trim();
-  if(!name){$('#personErr').textContent='Wpisz imię.';f.name.focus();return}
-  const p={id:editingPerson?editingPerson.id:uid(),name,role:f.role.value.trim(),photo:photoData};
-  if(await savePerson(p)){$('#personDlg').close();toast(editingPerson?'Zapisano zmiany':'Dodano osobę')}});
-$('#personDel').addEventListener('click',async()=>{if(editingPerson&&confirm('Usunąć '+editingPerson.name+'? Jej zadania staną się nieprzypisane.')&&await deletePerson(editingPerson.id)){$('#personDlg').close();toast('Usunięto')}});
-
-function openSettings(){const f=$('#setForm'),s=state.settings;f.name.value=s.name||'';f.eventName.value=s.eventName||'Fort Run';f.eventDate.value=s.eventDate||'';$('#setDlg').showModal()}
-$('#settingsBtn').addEventListener('click',openSettings);
-$('#setForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target;
-  const s={name:f.name.value.trim()||'Nasze stowarzyszenie',eventName:f.eventName.value.trim()||'Fort Run',eventDate:f.eventDate.value};
-  if(await saveSettings(s)){$('#setDlg').close();toast('Zapisano ustawienia')}});
+$('#personForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,name=f.name.value.trim(),err=m=>{$('#personErr').textContent=m};
+  if(!name)return err('Wpisz imię i nazwisko.');
+  if(state.people.some(p=>norm(p.name)===norm(name)&&p.id!==editPerson?.id))return err('Osoba o takim imieniu już jest. Dodaj np. drugą literę nazwiska.');
+  const adm=isAdmin();let role=editPerson?.role||'member',pinHash=editPerson?.pinHash||'';
+  if(adm){
+    role=f.role.value;
+    if(editPerson&&editPerson.role==='admin'&&role!=='admin'&&state.people.filter(p=>p.role==='admin').length<2)return err('To jedyny administrator. Najpierw nadaj tę rolę komuś innemu.');
+    const pin=f.pin.value.trim();
+    if(role!=='member'){if(pin){if(!/^\d{4,12}$/.test(pin))return err('PIN musi mieć od 4 do 12 cyfr.');pinHash=await hash(pin)}else if(!pinHash)return err('Ustaw PIN, żeby ta osoba mogła się zalogować do panelu.')}
+    else pinHash='';
+  }
+  const col=f.querySelector('[name=pcolor]:checked')?.value||nextColor();
+  const p={...(editPerson||{}),id:editPerson?editPerson.id:uid(),name,nick:f.nick.value.trim(),func:f.func.value.trim(),role,pinHash,photo:photoData,color:col};
+  if(await put('people',p)){$('#personDlg').close();toast(editPerson?'Zapisano zmiany':'Dodano osobę')}});
+$('#personDel').addEventListener('click',async()=>{if(editPerson&&confirm('Usunąć '+editPerson.name+'? Jej zadania staną się nieprzypisane.')&&await del('people',editPerson.id)){$('#personDlg').close();toast('Usunięto')}});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
-/* ---------- events ---------- */
-document.addEventListener('click',e=>{
+/* ---------- zdarzenia ---------- */
+document.addEventListener('submit',async e=>{
+  const f=e.target;
+  if(f.classList.contains('nameForm')){e.preventDefault();const n=norm(f.n.value),errEl=f.parentElement.querySelector('.nameErr');
+    if(!n){errEl.textContent='Wpisz imię i nazwisko.';return}
+    const p=state.people.find(x=>norm(x.name)===n)||(()=>{const byNick=state.people.filter(x=>x.nick&&norm(x.nick)===n);return byNick.length===1?byNick[0]:null})();
+    if(!p){errEl.textContent='Nie ma takiej osoby na liście. Sprawdź pisownię albo poproś koordynatora o dodanie.';return}
+    ls.set('ek-me',p.id);toast('Cześć, '+shortName(p)+'!');if(ui.screen==='home')go('#/me');else render()}
+  else if(f.id==='profileForm'){e.preventDefault();const p=member();if(!p)return;
+    const upd={...p,nick:f.nick.value.trim(),color:f.querySelector('[name=color]:checked')?.value||colorOf(p)};
+    if(profPhoto!==undefined)upd.photo=profPhoto;
+    if(await put('people',upd)){profPhoto=undefined;toast('Zapisano profil')}}
+  else if(f.id==='loginForm'){e.preventDefault();const p=state.people.find(x=>norm(x.name)===norm(f.n.value));
+    if(!p||p.role==='member'||!p.pinHash||p.pinHash!==await hash(f.p.value.trim())){ui.loginErr='Nieprawidłowe imię lub PIN.';render();return}
+    ui.loginErr='';ls.set('ek-session',p.id);if(!member())ls.set('ek-me',p.id);toast('Witaj, '+shortName(p));go('#/admin')}
+  else if(f.id==='setupForm'){e.preventDefault();const n=f.n.value.trim(),p1=f.p.value.trim();
+    if(!n){ui.loginErr='Wpisz imię i nazwisko.';return render()}
+    if(!/^\d{4,12}$/.test(p1)){ui.loginErr='PIN musi mieć od 4 do 12 cyfr.';return render()}
+    if(p1!==f.p2.value.trim()){ui.loginErr='PIN-y się różnią.';return render()}
+    const p={id:uid(),name:n,nick:'',func:'Administrator',role:'admin',pinHash:await hash(p1),photo:'',color:PALETTE[0]};
+    if(await put('people',p)){ui.loginErr='';ls.set('ek-session',p.id);ls.set('ek-me',p.id);toast('Konto administratora gotowe');go('#/admin/zespol')}}
+});
+document.addEventListener('click',async e=>{
   const g=s=>e.target.closest(s);let el;
-  if(el=g('[data-tab]')){ui.tab=el.dataset.tab;render();return}
-  if(el=g('[data-new]')){const k=el.dataset.new;if(k==='person')openPerson();else openTask(null,{kind:k,date:el.dataset.date||''});return}
-  if(el=g('[data-edit]')){const t=state.tasks.find(x=>x.id===el.dataset.edit);if(t)openTask(t,{});return}
-  if(el=g('[data-edit-person]')){openPerson(person(el.dataset.editPerson));return}
-  if(el=g('[data-show-person]')){ui.person=el.dataset.showPerson;ui.showDone=false;ui.cat='all';ui.tab='zadania';render();return}
-  if(el=g('[data-cat]')){ui.cat=el.dataset.cat;render();return}
+  if(el=g('[data-go]')){e.preventDefault();const d=el.dataset.go;go('#/'+(d==='home'?'':d));return}
+  if(el=g('[data-logout]')){ls.set('ek-session',null);toast('Wylogowano z panelu');go('#/');return}
+  if(el=g('[data-notme]')){ls.set('ek-me',null);profPhoto=undefined;if(ui.screen==='me')go('#/');else render();return}
+  if(el=g('#profPhotoClear')){profPhoto='';$('#profPrev').innerHTML=esc(initials(member()?.name));return}
+  if(el=g('[data-new]')){const k=el.dataset.new;if(!me())return;
+    if(k==='task')openTask(null,{date:el.dataset.date||''});else if(k==='event')openEvent(null,{date:el.dataset.date||''});else openPerson();return}
+  if(el=g('[data-edit]')){const t=state.tasks.find(x=>x.id===el.dataset.edit);if(t&&me())openTask(t);return}
+  if(el=g('[data-edit-event]')){const ev=eventOf(el.dataset.editEvent);if(ev&&me())openEvent(ev);return}
+  if(el=g('[data-edit-person]')){const p=person(el.dataset.editPerson);if(p&&me()){if(!isAdmin()&&p.role!=='member')return toast('Tylko administrator może edytować organizatorów.');openPerson(p)}return}
+  if(el=g('[data-show-person]')){ui.fPerson=el.dataset.showPerson;ui.fEvent='all';ui.showDone=false;go('#/admin/zadania');return}
+  if(el=g('[data-copy]')){const url=eventUrl(el.dataset.copy);
+    try{await navigator.clipboard.writeText(url);toast('Skopiowano link do wydarzenia')}catch(err){prompt('Skopiuj link:',url)}return}
+  if(el=g('[data-ics]')){const[k,id]=el.dataset.ics.split(':'),p=member();
+    const tItem=t=>{const ev=eventOf(t.eventId);return {uid:'task-'+t.id,title:(isShared(t)?'👥 ':'')+'Zadanie: '+t.title+(ev?' ('+ev.name+')':''),date:t.date,time:t.time,place:ev?.place,desc:[t.notes,isShared(t)?'Wspólne: '+whoLabel(t):''].filter(Boolean).join('\n'),url:ev?eventUrl(ev.id):location.href.split('#')[0]+'#/me'}};
+    if(k==='event'){const ev=eventOf(id);if(ev)downloadICS(ev.name,[evItem(ev)])}
+    else if(k==='all'){const t0=today();downloadICS(ORG+' wydarzenia',state.events.filter(e=>e.date&&e.date>=t0&&(ui.fType==='all'||typeOf(e)===ui.fType)).map(evItem))}
+    else if(k==='mine'&&p){const ev=eventOf(id);downloadICS('Moje zadania '+(ev?ev.name:''),tasksForEvent(id).filter(t=>isMine(t,p.id)&&t.date&&!t.done).map(tItem))}
+    else if(k==='mineall'&&p)downloadICS('Moje zadania '+ORG,state.tasks.filter(t=>isMine(t,p.id)&&t.date&&!t.done).map(tItem));
+    return}
+  if(el=g('[data-ftype]')){ui.fType=el.dataset.ftype;render();return}
   if(el=g('[data-pview]')){ui.pview=el.dataset.pview;render();return}
-  if(el=g('[data-day]')){ui.cursor=parse(el.dataset.day);ui.pview='day';ui.tab='planer';render();return}
+  if(el=g('[data-day]')){ui.cursor=parse(el.dataset.day);ui.pview='day';render();return}
   if(el=g('[data-month]')){ui.cursor=new Date(ui.cursor.getFullYear(),+el.dataset.month,1);ui.pview='month';render();return}
-  if(el=g('[data-open-settings]')){openSettings();return}
   if(el=g('[data-nav]')){const n=+el.dataset.nav,c=ui.cursor;
-    if(n===0)ui.cursor=new Date();
-    else if(ui.pview==='day')ui.cursor=addDays(c,n);
-    else if(ui.pview==='week')ui.cursor=addDays(c,7*n);
-    else if(ui.pview==='month')ui.cursor=new Date(c.getFullYear(),c.getMonth()+n,1);
-    else ui.cursor=new Date(c.getFullYear()+n,c.getMonth(),1);
-    render();return}
+    ui.cursor=n===0?new Date():ui.pview==='day'?addDays(c,n):ui.pview==='week'?addDays(c,7*n):ui.pview==='month'?new Date(c.getFullYear(),c.getMonth()+n,1):new Date(c.getFullYear()+n,c.getMonth(),1);render();return}
 });
 document.addEventListener('change',async e=>{
-  if(e.target.id==='personFilter'){ui.person=e.target.value;render()}
-  else if(e.target.id==='showDone'){ui.showDone=e.target.checked;render()}
-  else if(e.target.dataset.toggle){const t=state.tasks.find(x=>x.id===e.target.dataset.toggle);if(t){const ok=await saveTask({...t,done:e.target.checked});if(!ok)e.target.checked=!e.target.checked}}
+  const t=e.target;
+  if(t.id==='fEvent'){ui.fEvent=t.value;render()}
+  else if(t.id==='fPerson'){ui.fPerson=t.value;render()}
+  else if(t.id==='fCal'){ui.fCal=t.value;render()}
+  else if(t.id==='showDone'){ui.showDone=t.checked;render()}
+  else if(t.id==='profPhoto'){const file=t.files[0];if(file)readPhoto(file,src=>{profPhoto=src;$('#profPrev').innerHTML=`<img src="${src}" alt="">`});t.value=''}
+  else if(t.name==='color'&&t.closest('#profileForm')){$('.profhead')?.style.setProperty('--pc',t.value)}
+  else if(t.dataset.toggle){const task=state.tasks.find(x=>x.id===t.dataset.toggle);if(!task)return;
+    const by=member()?.id||me()?.id||'';
+    const ok=await put('tasks',{...task,done:t.checked,doneAt:t.checked?Date.now():null,doneBy:t.checked?by:''});
+    if(!ok)t.checked=!t.checked;else if(t.checked)toast('Odhaczone')}
 });
-init();
+readHash();init();
 </script>
 </body>
 </html>
